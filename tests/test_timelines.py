@@ -9,7 +9,7 @@ def test_note_on_off():
         s.track = s.engine.track(0)
 
     with s[0, 0]:
-        s.note = c.NoteOn(n.C5) | s.track | s
+        s.note = c.NoteOn(n.C5, module=0) | s.track | s
 
     with s[4, 0]:
         s.note.off() | s
