@@ -1,3 +1,5 @@
+import pyrsistent as p
+
 import rv
 n = rv.note.NOTECMD
 
@@ -14,6 +16,7 @@ __all__ = [
     'Session',
     'c',
     'n',
+    'p',
     'play',
     'rv',
     'sf',
