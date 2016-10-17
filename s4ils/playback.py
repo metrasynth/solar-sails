@@ -22,7 +22,6 @@ class BasicPlayback(object):
             src = src if isinstance(src, int) else src.index
             dest = command.dest
             dest = dest if isinstance(dest, int) else dest.index
-            print(src, dest)
             slot.connect_module(src, dest)
         elif isinstance(command, c.Engine):
             process = sunvox
