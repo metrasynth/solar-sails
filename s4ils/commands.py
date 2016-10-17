@@ -1,3 +1,6 @@
+import rv
+
+
 class Command(object):
     args = ()
 
@@ -39,6 +42,10 @@ class Command(object):
         return c2
 
 
+class ConnectModules(Command):
+    args = 'engine', 'src', 'dest'
+
+
 class Engine(Command):
 
     class Track(object):
@@ -47,21 +54,65 @@ class Engine(Command):
             self.engine = engine
             self.index = index
 
+        def __repr__(self):
+            return '<Track {}>'.format(self.index)
+
         def __ror__(self, other):
             if isinstance(other, NoteOn):
                 note = other.copy(engine=self.engine, track=self)
                 return note
 
+    class Output(object):
+
+        index = 0
+
+        def __init__(self, engine):
+            self.engine = engine
+
+        def __repr__(self):
+            return '<Output>'
+
+        def __lshift__(self, other):
+            return ConnectModules(self.engine, other.module, self)
+
+        def __rshift__(self, other):
+            return ConnectModules(self.engine, self, other.module)
+
+    def __init__(self, *args, **kw):
+        super(Engine, self).__init__(*args, **kw)
+        self.output = self.Output(self)
+
+    def new_module(self, obj, *args, **kw):
+        if isinstance(obj, type) and issubclass(obj, rv.m.Module):
+            obj = obj(*args, **kw)
+        if isinstance(obj, rv.m.Module):
+            return Module(self, obj)
+        else:
+            raise ValueError()
+
     def track(self, index):
         return self.Track(self, index)
 
 
-class NoteOn(Command):
-    args = 'note', 'vel', 'engine', 'track'
+class Module(Command):
+    args = 'engine', 'module'
 
-    def off(self):
-        return NoteOff(self.engine, self.track)
+    def __lshift__(self, other):
+        return ConnectModules(self, other.module, self.module)
+
+    def __rshift__(self, other):
+        return ConnectModules(self, self.module, other.module)
+
+    def note_on(self, note, vel=None):
+        return NoteOn(note, vel, self.engine, self.module)
 
 
 class NoteOff(Command):
-    args = 'engine', 'track'
+    args = 'engine', 'module', 'track'
+
+
+class NoteOn(Command):
+    args = 'note', 'vel', 'engine', 'module', 'track'
+
+    def off(self):
+        return NoteOff(self.engine, self.module, self.track)
