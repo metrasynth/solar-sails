@@ -47,7 +47,7 @@ class Engine(Command):
             self.engine = engine
             self.index = index
 
-        def __lshift__(self, other):
+        def __ror__(self, other):
             if isinstance(other, NoteOn):
                 note = other.copy(engine=self.engine, track=self)
                 return note

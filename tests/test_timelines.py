@@ -5,14 +5,14 @@ def test_note_on_off():
     s = Session()
 
     with s[INIT]:
-        s.engine = s << c.Engine()
+        s.engine = c.Engine() | s
         s.track = s.engine.track(0)
 
     with s[0, 0]:
-        s.note = s << (s.track << c.NoteOn(n.C5))
+        s.note = c.NoteOn(n.C5) | s.track | s
 
     with s[4, 0]:
-        s << s.note.off()
+        s.note.off() | s
 
     with s[-1, 0]:
         cmds = s.cmd_timeline

@@ -74,7 +74,7 @@ class Session(object):
     def __getitem__(self, pos):
         return ControlPosition(self, *pos)
 
-    def __lshift__(self, other):
+    def __ror__(self, other):
         cpos = self._with_position
         if cpos and isinstance(other, Command):
             self.cmd_timeline_append(cpos.pos, other)
