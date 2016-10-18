@@ -74,13 +74,14 @@ class Session(object):
     def __getitem__(self, pos):
         return ControlPosition(self, *pos)
 
+    def __add__(self, other):
+        return CommandPosition(self, 0, 0) + other
+
+    def __sub__(self, other):
+        return CommandPosition(self, 0, 0) - other
+
     def __ror__(self, other):
-        cpos = self._with_position
-        if cpos and isinstance(other, Command):
-            self.cmd_timeline_append(cpos.pos, other)
-            return other
-        else:
-            raise ValueError()
+        return other | CommandPosition(self, 0, 0)
 
     @property
     def cmd_timeline(self):
@@ -103,6 +104,49 @@ class Session(object):
         ctl_timeline = ctl_timeline.set(position, commands)
         timeline = timeline.set(self._with_position.pos, ctl_timeline)
         self._ctl_timelines = timeline
+
+
+class CommandPosition(object):
+
+    def __init__(self, session, beat, tick=None):
+        self.session = session
+        if tick is not None:
+            self.beat = beat
+            self.tick = tick
+        elif isinstance(beat, tuple):
+            self.beat, self.tick = beat
+        else:
+            self.beat = beat // TICKS_PER_BEAT
+            self.tick = beat % TICKS_PER_BEAT
+
+    def __add__(self, other):
+        if isinstance(other, int):
+            other = (0, other)
+        if isinstance(other, tuple) and len(other) == 2:
+            beats, ticks = other
+            ticks += beats * TICKS_PER_BEAT
+            return self.__class__(self.session, self.ticks + ticks)
+
+    def __sub__(self, other):
+        if isinstance(other, int):
+            return self + -other
+        elif isinstance(other, tuple) and len(other) == 2:
+            beats, ticks = other
+            ticks += beats * TICKS_PER_BEAT
+            return self + -ticks
+
+    def __ror__(self, other):
+        cpos = self.session._with_position
+        if cpos and isinstance(other, Command):
+            cpos += (self.beat, self.tick)
+            self.session.cmd_timeline_append(cpos.pos, other)
+            return other
+        else:
+            raise ValueError()
+
+    @property
+    def ticks(self):
+        return self.tick + self.beat * TICKS_PER_BEAT
 
 
 class ControlPosition(object):
