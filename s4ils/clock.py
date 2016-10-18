@@ -1,5 +1,3 @@
-from collections import deque
-
 import rv
 
 import sunvox.buffered
@@ -16,7 +14,6 @@ class Clock(object):
         self.shuffle = shuffle
         self.shuffle_range = shuffle_range
         self.tick = 0
-        self.tick_frames = deque()
         self.last_tick_frame = -size
         self.frame = 0
         self.freq = freq
@@ -59,7 +56,7 @@ class Clock(object):
                 pos = self.frame + relative_pos
                 if self.last_tick_frame is None or pos > self.last_tick_frame + 1:
                     self.last_tick_frame = pos
-                    self.tick_frames.append(pos)
+                    self.tick += 1
             self.frame += self.size
 
     def read_block(self):
