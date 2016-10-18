@@ -6,6 +6,7 @@ import rv
 import sunvox
 
 from s4ils import c
+from s4ils.clock import Clock
 
 
 class BasicPlayback(object):
@@ -65,12 +66,23 @@ def play(session):
     :type session: s4ils.session.Session
     """
     playback = BasicPlayback()
+    clock = Clock()
     pos = (-1, 0)
     last_ctl_pos = max(session._ctl_timelines)
     with session[last_ctl_pos]:
         last_cmd_pos = max(session.cmd_timeline)
+    start_time = None
     while pos <= last_cmd_pos:
         with session[pos] as cpos:
+            if pos == (0, 0):
+                start_time = time.time()
+            if pos >= (0, 0):
+                clock.advance()
+                wait_until = start_time + clock.last_tick_frame / clock.freq
+                first_wait = max(0, (wait_until - time.time()) * 0.75)
+                time.sleep(first_wait)
+                while time.time() < wait_until:
+                    time.sleep(0)
             cmds = session.cmd_timeline.get(pos, [])
             for cmd in cmds:
                 print('pos={!r} cmd={!r}'.format(pos, cmd))
@@ -79,5 +91,4 @@ def play(session):
                 if pos[0] >= 0:
                     print('pos={!r}'.format(pos), end='\r')
             pos = (cpos + 1).pos
-            if pos[0] >= 0:
-                time.sleep(60. / 120. / 24.)
+    clock.stop()
