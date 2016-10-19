@@ -4,6 +4,8 @@ import rv
 class Command(object):
     args = ()
 
+    processed = False
+
     def __init__(self, *args, **kw):
         self._apply_args(*args, **kw)
 
@@ -94,6 +96,37 @@ class Engine(Command):
         return self.Track(self, index)
 
 
+class Generator(Command):
+    args = 'fn', 'fn_args', 'fn_kw'
+
+    generator = None
+
+    def advance(self, cursor):
+        if self.generator is not None:
+            try:
+                self.generator.send(cursor)
+            except StopIteration:
+                self.stop()
+
+    @property
+    def started(self):
+        return self.generator is not None
+
+    def start(self):
+        if not self.started:
+            self.generator = self.fn(*self.fn_args, **self.fn_kw)
+            self.generator.send(None)
+
+    def stop(self):
+        self.generator = None
+
+    @classmethod
+    def factory(cls, fn):
+        def factory_fn(*args, **kw):
+            return cls(fn, args, kw)
+        return factory_fn
+
+
 class Module(Command):
     args = 'engine', 'module'
 
@@ -103,7 +136,7 @@ class Module(Command):
     def __rshift__(self, other):
         return ConnectModules(self, self.module, other.module)
 
-    def note_on(self, note, vel=None):
+    def on(self, note, vel=None):
         return NoteOn(note, vel, self.engine, self.module)
 
 

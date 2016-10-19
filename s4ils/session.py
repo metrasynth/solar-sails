@@ -75,13 +75,13 @@ class Session(object):
         return ControlPosition(self, *pos)
 
     def __add__(self, other):
-        return CommandPosition(self, 0, 0) + other
+        return CommandCursor(self, 0, 0) + other
 
     def __sub__(self, other):
-        return CommandPosition(self, 0, 0) - other
+        return CommandCursor(self, 0, 0) - other
 
     def __ror__(self, other):
-        return other | CommandPosition(self, 0, 0)
+        return other | CommandCursor(self, 0, 0)
 
     @property
     def cmd_timeline(self):
@@ -92,6 +92,26 @@ class Session(object):
             return timeline[pos]
         else:
             raise RuntimeError('Must be within a "with" block')
+
+    @property
+    def beat(self):
+        cpos = self._with_position
+        if cpos:
+            return cpos.beat
+        else:
+            raise RuntimeError('Must be within a "with" block')
+
+    @property
+    def tick(self):
+        cpos = self._with_position
+        if cpos:
+            return cpos.tick
+        else:
+            raise RuntimeError('Must be within a "with" block')
+
+    @property
+    def ticks(self):
+        return self.beat * 24 + self.tick
 
     def ctl_timeline_advanced_to(self, position):
         return advanced_to(self._ctl_timelines, position, pmap, True)
@@ -106,10 +126,10 @@ class Session(object):
         self._ctl_timelines = timeline
 
 
-class CommandPosition(object):
+class CommandCursor(object):
 
     def __init__(self, session, beat, tick=None):
-        self.session = session
+        self.s = session
         if tick is not None:
             self.beat = beat
             self.tick = tick
@@ -125,7 +145,7 @@ class CommandPosition(object):
         if isinstance(other, tuple) and len(other) == 2:
             beats, ticks = other
             ticks += beats * TICKS_PER_BEAT
-            return self.__class__(self.session, self.ticks + ticks)
+            return self.__class__(self.s, self.ticks + ticks)
 
     def __sub__(self, other):
         if isinstance(other, int):
@@ -136,13 +156,16 @@ class CommandPosition(object):
             return self + -ticks
 
     def __ror__(self, other):
-        cpos = self.session._with_position
+        cpos = self.s._with_position
         if cpos and isinstance(other, Command):
             cpos += (self.beat, self.tick)
-            self.session.cmd_timeline_append(cpos.pos, other)
+            self.s.cmd_timeline_append(cpos.pos, other)
             return other
         else:
             raise ValueError()
+
+    def __repr__(self):
+        return '<CommandCursor ({},{})>'.format(self.beat, self.tick)
 
     @property
     def ticks(self):
