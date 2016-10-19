@@ -3,6 +3,37 @@ import rv
 import sunvox.buffered
 
 
+class BasicClock(object):
+
+    def __init__(self, bpm=125, shuffle=0.0, shuffle_range=50, freq=44100):
+        self.bpm = bpm
+        self.shuffle = shuffle
+        self.shuffle_range = shuffle_range
+        self.tick = -1
+        self.last_tick_frame = None
+        self.freq = freq
+
+    def advance(self):
+        if self.last_tick_frame is None:
+            self.last_tick_frame = 0
+        else:
+            self.last_tick_frame += self.predicted_next_tick()
+        self.tick += 1
+
+    def predicted_next_tick(self):
+        return self.freq * 60. // self.tick_bpm(self.tick) // 24
+
+    def tick_bpm(self, tick):
+        sixteenth = tick // 6
+        shuffle_amount = round(self.shuffle * self.shuffle_range)
+        if sixteenth % 2 == 0:
+            shuffle_amount = -shuffle_amount
+        return self.bpm + shuffle_amount
+
+    def stop(self):
+        pass
+
+
 class Clock(object):
     """
     High-resolution tick clock.
@@ -13,7 +44,7 @@ class Clock(object):
         self.bpm = bpm
         self.shuffle = shuffle
         self.shuffle_range = shuffle_range
-        self.tick = 0
+        self.tick = -1
         self.last_tick_frame = -size
         self.frame = 0
         self.freq = freq
@@ -48,7 +79,7 @@ class Clock(object):
             self.slot.play_from_beginning()
             self.started = True
         next_tick_frame = int((self.last_tick_frame or 0) + self.predicted_tick_frames())
-        blocks_to_advance = (next_tick_frame // self.size) - (self.frame // self.size) + 1
+        blocks_to_advance = max(1, (next_tick_frame // self.size) - (self.frame // self.size) + 1)
         for x in range(blocks_to_advance):
             buf = self.read_block()
             relative_pos = self.tick_pos_in_buffer(buf)
@@ -64,8 +95,11 @@ class Clock(object):
         return buf
 
     def set_tempo(self):
-        self.slot.send_event(0, sunvox.NOTECMD.EMPTY, 0, 0, 0x001f,
-                             self.tick_bpm(self.tick))
+        last_tempo = getattr(self, 'last_tempo', self.bpm)
+        next_tempo = self.tick_bpm(self.tick)
+        if next_tempo != last_tempo:
+            self.slot.send_event(0, sunvox.NOTECMD.EMPTY, 0, 0, 0x001f, next_tempo)
+            self.last_tempo = next_tempo
 
     def tick_bpm(self, tick):
         sixteenth = tick // 6
@@ -80,7 +114,7 @@ class Clock(object):
             return ticks[0]
 
     def predicted_tick_frames(self):
-        return self.freq * 60. // self.bpm // 24
+        return self.freq * 60. // self.tick_bpm(self.tick) // 24
 
     def stop(self):
         self.process.kill()

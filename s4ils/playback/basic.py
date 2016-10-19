@@ -6,7 +6,7 @@ import rv
 import sunvox
 
 from s4ils import c
-from s4ils.clock import Clock
+from s4ils.clock import BasicClock
 from s4ils.session import CommandCursor
 
 
@@ -79,7 +79,7 @@ def play(session, forever=False):
     :type forever: bool
     """
     playback = BasicPlayback()
-    clock = Clock()
+    clock = BasicClock(bpm=bpm, shuffle=shuffle)
     pos = (-1, 0)
     last_ctl_pos = max(session._ctl_timelines)
     with session[last_ctl_pos]:
