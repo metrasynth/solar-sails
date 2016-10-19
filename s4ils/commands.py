@@ -64,6 +64,9 @@ class Engine(Command):
                 note = other.copy(engine=self.engine, track=self)
                 return note
 
+        def off(self):
+            return NoteOff(self.engine, self)
+
     class Output(object):
 
         index = 0
@@ -141,11 +144,11 @@ class Module(Command):
 
 
 class NoteOff(Command):
-    args = 'engine', 'module', 'track'
+    args = 'engine', 'track'
 
 
 class NoteOn(Command):
     args = 'note', 'vel', 'engine', 'module', 'track'
 
     def off(self):
-        return NoteOff(self.engine, self.module, self.track)
+        return NoteOff(self.engine, self.track)
