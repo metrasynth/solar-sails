@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import os
 import time
 from tempfile import mkstemp
@@ -15,14 +16,17 @@ class BasicPlayback(object):
     def __init__(self):
         self.engine_processes = {}
         self.engine_slots = {}
-        self.generators = []
+        self.generators = OrderedDict()
         self.default_velocity = 128
 
     def advance_generators(self, session, pos):
         with session[pos]:
-            for gen in self.generators:
-                if gen.started:
-                    gen.advance(session)
+            for gen, last_pos in self.generators.items():
+                if gen.started and last_pos < pos:
+                    with session[pos]:
+                        gen.advance(session.cursor())
+                    self.generators[gen] = pos
+                    yield gen
 
     def process(self, command):
         if isinstance(command, c.ConnectModules):
@@ -38,8 +42,11 @@ class BasicPlayback(object):
             self.engine_processes[command] = process
             self.engine_slots[command] = sunvox.Slot(process=process)
         elif isinstance(command, c.Generator):
-            self.generators.append(command)
+            self.generators[command] = (-1, 0)
             command.start()
+        elif isinstance(command, c.GeneratorStop):
+            del self.generators[command.parent]
+            command.parent.generator = None
         elif isinstance(command, c.Module):
             fd, name = mkstemp('.sunsynth')
             os.write(fd, rv.Synth(command.module).read())
@@ -54,7 +61,7 @@ class BasicPlayback(object):
                 track_num=command.track.index,
                 note=sunvox.NOTECMD.NOTE_OFF,
                 vel=0,
-                module=command.module,
+                module=0,
                 ctl=0,
                 ctl_val=0,
             )
@@ -73,7 +80,7 @@ class BasicPlayback(object):
         command.processed = True
 
 
-def play(session, forever=False):
+def play(session, bpm=125, shuffle=0.0, forever=False):
     """
     :type session: s4ils.session.Session
     :type forever: bool
@@ -96,15 +103,17 @@ def play(session, forever=False):
                 time.sleep(first_wait)
                 while time.time() < wait_until:
                     time.sleep(0)
-            # TODO: Deal with generators more recursively; (allow generators to spawn generators)
-            cmds = session.cmd_timeline.get(pos, [])
-            processed = 0
-            for cmd in cmds:
-                if not cmd.processed:
-                    print('pos={!r} cmd={!r}'.format(pos, cmd))
-                    playback.process(cmd)
-                    processed += 1
-            playback.advance_generators(session, pos)
+            keep_processing = True
+            while keep_processing:
+                cmds = session.cmd_timeline.get(pos, [])
+                processed = 0
+                for cmd in cmds:
+                    if not cmd.processed:
+                        print('pos={!r} cmd={!r}'.format(pos, cmd))
+                        playback.process(cmd)
+                        processed += 1
+                advanced = list(playback.advance_generators(session, pos))
+                keep_processing = len(advanced) > 0
             cmds = session.cmd_timeline.get(pos, [])
             for cmd in cmds:
                 if not cmd.processed:

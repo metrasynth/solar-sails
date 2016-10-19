@@ -109,7 +109,7 @@ class Generator(Command):
             try:
                 self.generator.send(cursor)
             except StopIteration:
-                self.stop()
+                self.stop() | cursor
 
     @property
     def started(self):
@@ -121,13 +121,17 @@ class Generator(Command):
             self.generator.send(None)
 
     def stop(self):
-        self.generator = None
+        return GeneratorStop(self)
 
     @classmethod
     def factory(cls, fn):
         def factory_fn(*args, **kw):
             return cls(fn, args, kw)
         return factory_fn
+
+
+class GeneratorStop(Command):
+    args = 'parent',
 
 
 class Module(Command):
