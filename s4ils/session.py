@@ -75,13 +75,21 @@ class Session(object):
         return ControlPosition(self, *pos)
 
     def __add__(self, other):
-        return CommandCursor(self, 0, 0) + other
+        return self.cursor() + other
 
     def __sub__(self, other):
-        return CommandCursor(self, 0, 0) - other
+        return self.cursor() - other
 
     def __ror__(self, other):
-        return other | CommandCursor(self, 0, 0)
+        return other | self.cursor()
+
+    @property
+    def beat(self):
+        cpos = self._with_position
+        if cpos:
+            return cpos.beat
+        else:
+            raise RuntimeError('Must be within a "with" block')
 
     @property
     def cmd_timeline(self):
@@ -94,12 +102,9 @@ class Session(object):
             raise RuntimeError('Must be within a "with" block')
 
     @property
-    def beat(self):
-        cpos = self._with_position
-        if cpos:
-            return cpos.beat
-        else:
-            raise RuntimeError('Must be within a "with" block')
+    def origin(self):
+        t = self.ticks
+        return t // TICKS_PER_BEAT, t % TICKS_PER_BEAT
 
     @property
     def tick(self):
@@ -111,7 +116,7 @@ class Session(object):
 
     @property
     def ticks(self):
-        return self.beat * 24 + self.tick
+        return self.beat * TICKS_PER_BEAT + self.tick
 
     def ctl_timeline_advanced_to(self, position):
         return advanced_to(self._ctl_timelines, position, pmap, True)
@@ -125,11 +130,15 @@ class Session(object):
         timeline = timeline.set(self._with_position.pos, ctl_timeline)
         self._ctl_timelines = timeline
 
+    def cursor(self):
+        return CommandCursor(self, 0, 0)
+
 
 class CommandCursor(object):
 
-    def __init__(self, session, beat, tick=None):
+    def __init__(self, session, beat, tick=None, origin=None):
         self.s = session
+        self.origin = origin or session._with_position.pos
         if tick is not None:
             self.beat = beat
             self.tick = tick
@@ -145,15 +154,20 @@ class CommandCursor(object):
         if isinstance(other, tuple) and len(other) == 2:
             beats, ticks = other
             ticks += beats * TICKS_PER_BEAT
-            return self.__class__(self.s, self.ticks + ticks)
+            return self.__class__(self.s, self.ticks + ticks, origin=self.origin)
 
     def __sub__(self, other):
         if isinstance(other, int):
             return self + -other
-        elif isinstance(other, tuple) and len(other) == 2:
+        if isinstance(other, tuple) and len(other) == 2:
             beats, ticks = other
             ticks += beats * TICKS_PER_BEAT
             return self + -ticks
+        if isinstance(other, Session):
+            other = CommandCursor(other, 0, 0)
+        if isinstance(other, CommandCursor):
+            diff = self.abs_ticks - other.abs_ticks
+            return diff // TICKS_PER_BEAT, diff % TICKS_PER_BEAT
 
     def __ror__(self, other):
         cpos = self.s._with_position
@@ -166,6 +180,25 @@ class CommandCursor(object):
 
     def __repr__(self):
         return '<CommandCursor ({},{})>'.format(self.beat, self.tick)
+
+    @property
+    def abs_pos(self):
+        t = self.abs_ticks
+        return t // TICKS_PER_BEAT, t % TICKS_PER_BEAT
+
+    @property
+    def abs_beat(self):
+        return self.abs_ticks // TICKS_PER_BEAT
+
+    @property
+    def abs_tick(self):
+        return self.abs_ticks % TICKS_PER_BEAT
+
+    @property
+    def abs_ticks(self):
+        a_beat, a_tick = self.origin
+        a_ticks = a_beat * TICKS_PER_BEAT + a_tick
+        return a_ticks + self.ticks
 
     @property
     def ticks(self):
