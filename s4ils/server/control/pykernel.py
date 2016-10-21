@@ -7,8 +7,8 @@ import s4ils
 
 
 class KeepAlive(ZMQExitAutocall):
-    def __call__(self, *args, **kwargs):
-        super().__call__(True)
+    def __call__(self, keep_kernel=True):
+        super().__call__(keep_kernel)
 
 keep_alive = KeepAlive()
 
