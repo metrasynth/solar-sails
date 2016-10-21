@@ -3,7 +3,9 @@
 from setuptools import find_packages, setup
 
 dependencies = [
-    'PyQt5',
+    'ipython',
+    'prompt-toolkit',
+    'pyrsistent',
     'solar-flares',
 ]
 
@@ -21,7 +23,12 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=dependencies,
-    entry_points={},
+    entry_points={
+        'console_scripts': [
+            's4ilsd=s4ils.scripts.s4ilsd:main',
+            's4ils-console=s4ils.scripts.console:main',
+        ],
+    },
     classifiers=[
         # As from http://pypi.python.org/pypi?%3Aaction=list_classifiers
         # 'Development Status :: 1 - Planning',
