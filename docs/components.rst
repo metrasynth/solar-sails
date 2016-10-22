@@ -28,43 +28,44 @@
     storage commandlog as "command\nlog"
     storage controllog as "control\nlog"
     rectangle s4ils_console
-    rectangle s4ils_monitor
     rectangle s4ils_midi_clock
     rectangle s4ils_midi_in
-    rectangle s4ils_sunvox_out
     rectangle s4ils_midi_out
+    rectangle s4ils_monitor
+    rectangle sunvosc
 
     command_logger ---> commandlog
-    control_logger ---> controllog
-
     command_logger --> s4ils_monitor
+
+    control_logger ---> controllog
     control_logger --> s4ils_monitor
 
-    loop ---> command_logger
     control_timeline -> control_logger
 
     ipython_engine --> control_timeline
-    s4ils_console <-> ipython_engine
 
-    s4ils_midi_in --> control_service
+    s4ils_console <.> ipython_engine : zmq
+    s4ils_midi_in .> control_service : osc
 
     control_service --> control_timeline
 
     control_timeline -> command_timeline
     command_timeline --> loop
+
     clock <-up-> loop
-
-    loop --> ticker
-
-    ticker ---> s4ils_midi_clock
 
     loop -> sunvox
     loop -> midi
-
     loop -> generators
+    loop --> ticker
+    loop ---> command_logger
+
+    ticker ...> s4ils_midi_clock : osc
+
     generators -up-> command_timeline
 
-    sunvox ---> s4ils_sunvox_out
-    midi ---> s4ils_midi_out
+    sunvox <...> sunvosc : osc\n(bidirectional)
+
+    midi ...> s4ils_midi_out : osc
 
     @enduml
