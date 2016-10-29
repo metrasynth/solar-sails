@@ -2,7 +2,7 @@
 
 import os
 
-import s4ils
+import s4ils.scripts.gui
 import sunvox
 
 
@@ -12,7 +12,7 @@ SUNVOX_LIB_PATH = os.path.join(os.path.dirname(sunvox.__file__), 'lib')
 block_cipher = None
 
 
-a = Analysis(['s4ils/scripts/gui.py'],
+a = Analysis([s4ils.scripts.gui.__file__],
              pathex=[S4ILS_BASE_PATH],
              binaries=[],
              datas=[(SUNVOX_LIB_PATH, 'sunvox/lib')],
