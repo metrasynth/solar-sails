@@ -2,7 +2,6 @@ from collections import OrderedDict
 import io
 import logging
 import os
-import resource
 from tempfile import mkstemp
 import threading
 from time import time, sleep
