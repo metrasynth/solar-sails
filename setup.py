@@ -3,9 +3,12 @@
 from setuptools import find_packages, setup
 
 dependencies = [
+    'ipykernel',
     'ipython',
     'prompt-toolkit',
+    'pyqt5',
     'pyrsistent',
+    'quamash',
     'solar-flares',
 ]
 
@@ -27,6 +30,7 @@ setup(
         'console_scripts': [
             's4ilsd=s4ils.scripts.s4ilsd:main',
             's4ils-console=s4ils.scripts.console:main',
+            's4ils-gui=s4ils.scripts.gui:main',
         ],
     },
     classifiers=[
