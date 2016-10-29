@@ -1,6 +1,7 @@
 # -*- mode: python -*-
 
 import os
+import sys
 
 import s4ils.scripts.gui
 import sunvox
@@ -12,10 +13,33 @@ SUNVOX_LIB_PATH = os.path.join(os.path.dirname(sunvox.__file__), 'lib')
 block_cipher = None
 
 
+if sys.platform == 'win32':
+    datas = [
+        (
+            os.path.join(SUNVOX_LIB_PATH, 'windows', 'lib_x86', 'sunvox.dll'),
+            '.',
+        ),
+    ]
+elif sys.platform == 'linux':
+    datas = [
+        (
+            os.path.join(SUNVOX_LIB_PATH, 'linux'),
+            './sunvox/lib/linux',
+        ),
+    ]
+elif sys.platform == 'darwin':
+    datas = [
+        (
+            os.path.join(SUNVOX_LIB_PATH, 'osx'),
+            './sunvox/lib/osx',
+        ),
+    ]
+
+
 a = Analysis([s4ils.scripts.gui.__file__],
              pathex=[S4ILS_BASE_PATH],
              binaries=[],
-             datas=[(SUNVOX_LIB_PATH, 'sunvox/lib')],
+             datas=datas,
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
@@ -28,7 +52,7 @@ pyz = PYZ(a.pure, a.zipped_data,
 exe = EXE(pyz,
           a.scripts,
           exclude_binaries=True,
-          name='gui',
+          name='s4ils-gui',
           debug=False,
           strip=False,
           upx=True,
@@ -39,8 +63,8 @@ coll = COLLECT(exe,
                a.datas,
                strip=False,
                upx=True,
-               name='gui')
+               name='s4ils-gui')
 app = BUNDLE(coll,
-             name='gui.app',
+             name='S4ils.app',
              icon=None,
              bundle_identifier=None)
