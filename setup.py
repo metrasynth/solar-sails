@@ -8,8 +8,10 @@ dependencies = [
     'prompt-toolkit',
     'pyqt5',
     'pyrsistent',
+    'python-osc',
     'quamash',
     'solar-flares',
+    'sunvosc',
 ]
 
 setup(
