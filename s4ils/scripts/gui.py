@@ -7,10 +7,12 @@ from quamash import QEventLoop
 
 from s4ils.ui.mainmenubar import MainMenuBar
 from s4ils.ui.welcomewidget import WelcomeWidget
+from s4ils.ui.openers.opener import Opener
 
 
 @begin.start
-def main():
+@begin.logging
+def main(*filenames: 'Files to open immediately'):
     """Start the S4ils GUI."""
     app = QApplication(sys.argv)
     loop = QEventLoop(app)
@@ -20,4 +22,9 @@ def main():
     welcome_widget = WelcomeWidget(main_window)
     main_window.setCentralWidget(welcome_widget)
     main_window.show()
+    for filename in filenames:
+        window = Opener.open_file(filename)
+        if window:
+            window.show()
+            window.setFocus(True)
     loop.run_forever()
