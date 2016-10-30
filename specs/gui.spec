@@ -11,24 +11,26 @@ SUNVOX_LIB_PATH = os.path.join(os.path.dirname(sunvox.__file__), 'lib')
 
 block_cipher = None
 
-datas = []
+datas = [
+    ('../s4ils/ui', './s4ils/ui'),
+]
 
 if sys.platform == 'win32':
-    datas = [
+    datas += [
         (
             os.path.join(SUNVOX_LIB_PATH, 'windows', 'lib_x86', 'sunvox.dll'),
             '.',
         ),
     ]
 elif sys.platform == 'linux':
-    datas = [
+    datas += [
         (
             os.path.join(SUNVOX_LIB_PATH, 'linux'),
             './sunvox/lib/linux',
         ),
     ]
 elif sys.platform == 'darwin':
-    datas = [
+    datas += [
         (
             os.path.join(SUNVOX_LIB_PATH, 'osx'),
             './sunvox/lib/osx',
