@@ -83,4 +83,7 @@ app = BUNDLE(
     name='S4ils.app',
     icon=None,
     bundle_identifier=None,
+    info_plist={
+        'NSHighResolutionCapable': 'True',
+    },
 )
