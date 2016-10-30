@@ -30,9 +30,9 @@ setup(
     install_requires=dependencies,
     entry_points={
         'console_scripts': [
-            's4ilsd=s4ils.scripts.s4ilsd:main',
-            's4ils-console=s4ils.scripts.console:main',
-            's4ils-gui=s4ils.scripts.gui:main',
+            's4ilsd=s4ils.scripts.s4ilsd:main.start',
+            's4ils-console=s4ils.scripts.console:main.start',
+            's4ils-gui=s4ils.scripts.gui:main.start',
         ],
     },
     classifiers=[
