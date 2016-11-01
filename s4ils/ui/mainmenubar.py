@@ -1,9 +1,10 @@
 import logging
 
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import qApp, QMenu, QAction, QMenuBar
+from PyQt5.QtWidgets import qApp, QAction, QMenuBar
 
 from s4ils.ui.openers.sunvoxopener import SunvoxOpener
+from s4ils.ui.settings.settingsdialog import SettingsDialog
 
 
 class MainMenuBar(QMenuBar):
@@ -15,11 +16,14 @@ class MainMenuBar(QMenuBar):
 
     def create_actions(self):
         self.file_open_sunvox = QAction(
-            'Open Sun&Vox file...', self, triggered=self.on_file_open_sunvox_triggered)
+            'Open Sun&Vox file...', self,
+            triggered=self.on_file_open_sunvox_triggered)
         self.file_settings = QAction(
-            'Se&ttings...', self, triggered=self.on_file_settings_triggered)
+            'Se&ttings...', self,
+            triggered=self.on_file_settings_triggered)
         self.file_exit = QAction(
-            'E&xit', self, triggered=self.on_file_exit_triggered)
+            'E&xit', self,
+            triggered=self.on_file_exit_triggered)
 
     def create_menus(self):
         self.file_menu = self.addMenu('&File')
@@ -42,4 +46,4 @@ class MainMenuBar(QMenuBar):
 
     @pyqtSlot()
     def on_file_settings_triggered(self):
-        logging.debug('File>Settings triggered')
+        SettingsDialog(None).show()

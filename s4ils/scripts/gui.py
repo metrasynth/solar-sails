@@ -5,6 +5,7 @@ import begin
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from quamash import QEventLoop
 
+from s4ils.ui.app import App
 from s4ils.ui.mainmenubar import MainMenuBar
 from s4ils.ui.welcomewidget import WelcomeWidget
 from s4ils.ui.openers.opener import Opener
@@ -14,7 +15,7 @@ from s4ils.ui.openers.opener import Opener
 @begin.logging
 def main(*filenames: 'Files to open immediately'):
     """Start the S4ils GUI."""
-    app = QApplication(sys.argv)
+    app = App(sys.argv)
     loop = QEventLoop(app)
     asyncio.set_event_loop(loop)
     main_window = QMainWindow()
