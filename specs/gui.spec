@@ -12,7 +12,8 @@ SUNVOX_LIB_PATH = os.path.join(os.path.dirname(sunvox.__file__), 'lib')
 block_cipher = None
 
 datas = [
-    ('../s4ils/ui', './s4ils/ui'),
+    ('../s4ils/ui/*.ui', './s4ils/ui'),
+    ('../s4ils/ui/settings/*.ui', './s4ils/ui/settings'),
 ]
 
 if sys.platform == 'win32':
