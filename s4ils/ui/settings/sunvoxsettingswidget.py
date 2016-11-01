@@ -30,7 +30,8 @@ class SunVoxSettingsWidget(SunVoxSettingsWidgetBase, Ui_SunVoxSettingsWidget):
             parent=self,
             caption='Select directory containing SunVox app',
         )
-        self.item_model.add_path(path)
+        if path:
+            self.item_model.add_path(path)
 
     @pyqtSlot()
     def on_remove_button_clicked(self):
