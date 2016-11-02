@@ -1,4 +1,3 @@
-import logging
 import os
 
 from PyQt5.uic import loadUiType
@@ -21,8 +20,8 @@ class SunVoxMainWindow(SunVoxMainWindowBase, Ui_SunVoxMainWindow):
         self.setupUi(self)
 
     def setupUi(self, ui):
+        from .sunvoxmainmenubar import SunVoxMainMenuBar
         super(SunVoxMainWindow, self).setupUi(ui)
-        from s4ils.ui.sunvoxmainmenubar import SunVoxMainMenuBar
         self.setMenuBar(SunVoxMainMenuBar(self))
 
     def closeEvent(self, event):

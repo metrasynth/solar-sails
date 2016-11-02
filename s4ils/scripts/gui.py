@@ -8,7 +8,7 @@ from quamash import QEventLoop
 from s4ils.ui.app import App
 from s4ils.ui.mainmenubar import MainMenuBar
 from s4ils.ui.welcomewidget import WelcomeWidget
-from s4ils.ui.openers.opener import Opener
+from s4ils.ui.openers import Opener
 import s4ils.ui.sun
 
 

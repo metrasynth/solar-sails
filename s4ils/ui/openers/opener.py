@@ -68,3 +68,13 @@ class Opener(object):
             directory=directory,
             filter=self.filter,
         )
+
+    def exec_(self, filename=None):
+        if filename is None:
+            filename, _ = self.requested_filename()
+        if filename:
+            _, ext = os.path.splitext(filename)
+            opener_class = self._opener_classes[ext]
+            return opener_class.new_or_existing_window(filename)
+        else:
+            return None

@@ -3,7 +3,7 @@ import logging
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import qApp, QAction, QMenuBar
 
-from s4ils.ui.openers.sunvoxopener import SunvoxOpener
+from s4ils.ui.openers import AnyOpener
 from s4ils.ui.settings.settingsdialog import SettingsDialog
 
 
@@ -13,11 +13,12 @@ class MainMenuBar(QMenuBar):
         super().__init__(parent)
         self.create_actions()
         self.create_menus()
+        self.create_shortcuts()
 
     def create_actions(self):
-        self.file_open_sunvox = QAction(
-            'Open Sun&Vox file...', self,
-            triggered=self.on_file_open_sunvox_triggered)
+        self.file_open = QAction(
+            '&Open...', self,
+            triggered=self.on_file_open_triggered)
         self.file_settings = QAction(
             'Se&ttings...', self,
             triggered=self.on_file_settings_triggered)
@@ -30,19 +31,23 @@ class MainMenuBar(QMenuBar):
 
     def create_menus(self):
         self.file_menu = self.addMenu('&File')
-        self.file_menu.addAction(self.file_open_sunvox)
+        self.file_menu.addAction(self.file_open)
         self.file_menu.addAction(self.file_settings)
         self.file_menu.addAction(self.file_exit)
         self.tools_menu = self.addMenu('&Tools')
         self.tools_menu.addAction(self.tools_polyphonist)
+
+    def create_shortcuts(self):
+        self.file_open.setShortcut('Ctrl+O')
+        self.tools_polyphonist.setShortcut('Ctrl+Shift+P')
 
     @pyqtSlot()
     def on_file_exit_triggered(self):
         qApp.quit()
 
     @pyqtSlot()
-    def on_file_open_sunvox_triggered(self):
-        opener = SunvoxOpener(self)
+    def on_file_open_triggered(self):
+        opener = AnyOpener(self)
         window = opener.exec_()
         if window is not None:
             logging.debug('Got window %r', window)
