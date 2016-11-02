@@ -5,7 +5,7 @@ from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.uic import loadUiType
 
-from s4ils.ui.app import App
+from s4ils.ui import App
 
 UIC_NAME = 'sunvoxsettingswidget.ui'
 UIC_PATH = os.path.join(os.path.dirname(__file__), UIC_NAME)
