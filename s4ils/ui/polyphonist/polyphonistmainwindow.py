@@ -3,7 +3,7 @@ import os
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.uic import loadUiType
 
-from sf.polyphonist import ModulePolyphonist, PatternPolyphonist
+from sf.polyphonist import ModulePolyphonist
 
 from s4ils.ui import App
 from s4ils.ui.polyphonist.polyphonistmainmenubar import PolyphonistMainMenuBar
