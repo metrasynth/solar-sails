@@ -11,10 +11,18 @@ SUNVOX_LIB_PATH = os.path.join(os.path.dirname(sunvox.__file__), 'lib')
 
 block_cipher = None
 
-datas = [
-    ('../s4ils/ui/*.ui', './s4ils/ui'),
-    ('../s4ils/ui/settings/*.ui', './s4ils/ui/settings'),
-]
+datas = []
+for ui_dir in [
+    '',
+    '/polyphonist',
+    '/settings',
+    '/sun/synth',
+    '/sun/vox',
+]:
+    datas.append((
+        '../s4ils/ui{}/*.ui'.format(ui_dir),
+        './s4ils/ui{}'.format(ui_dir),
+    ))
 
 if sys.platform == 'win32':
     datas += [
