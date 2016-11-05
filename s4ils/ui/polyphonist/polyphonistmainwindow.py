@@ -136,3 +136,4 @@ class PolyphonistMainWindow(PolyphonistMainWindowBase, Ui_PolyphonistMainWindow)
     def on_voice_count_spinbox_valueChanged(self, value):
         self.min_voice_spinbox.setMaximum(value)
         self.max_voice_spinbox.setMaximum(value)
+        self.max_voice_spinbox.setValue(value)
