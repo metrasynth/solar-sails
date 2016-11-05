@@ -31,7 +31,7 @@ class PolyphonistMainWindow(PolyphonistMainWindowBase, Ui_PolyphonistMainWindow)
 
     @property
     def workspace_path(self):
-        return self.workspace_path_combo_box.currentText()
+        return self.workspace_path_combobox.currentText()
 
     def focusInEvent(self, event):
         self.sync_all()
@@ -52,7 +52,7 @@ class PolyphonistMainWindow(PolyphonistMainWindowBase, Ui_PolyphonistMainWindow)
         self.polyphonize_module_button.setEnabled(not already_poly)
         self.polyphonize_pattern_button.setEnabled(
             pp and pp.pattern_count and pp.is_compatible)
-        self.sync_monophonic_module_combo_box()
+        self.sync_monophonic_module_combobox()
 
     def sync_module_polyphonist(self):
         path = self.module_clipboard_path
@@ -64,8 +64,8 @@ class PolyphonistMainWindow(PolyphonistMainWindowBase, Ui_PolyphonistMainWindow)
             self.module_polyphonist = None
             label.setText('(nothing found in clipboard)')
 
-    def sync_monophonic_module_combo_box(self):
-        combo_box = self.monophonic_module_combo_box
+    def sync_monophonic_module_combobox(self):
+        combo_box = self.monophonic_module_combobox
         current = combo_box.currentText()
         combo_box.clear()
         if self.pattern_polyphonist:
@@ -100,8 +100,8 @@ class PolyphonistMainWindow(PolyphonistMainWindowBase, Ui_PolyphonistMainWindow)
 
     def sync_project_paths(self):
         workspace_paths = App.settings.value('sunvox/workspace_paths')
-        self.workspace_path_combo_box.clear()
-        self.workspace_path_combo_box.addItems(workspace_paths)
+        self.workspace_path_combobox.clear()
+        self.workspace_path_combobox.addItems(workspace_paths)
 
     @pyqtSlot(int)
     def on_min_voice_spinbox_valueChanged(self, value):
@@ -118,8 +118,8 @@ class PolyphonistMainWindow(PolyphonistMainWindowBase, Ui_PolyphonistMainWindow)
     @pyqtSlot()
     def on_polyphonize_pattern_button_clicked(self):
         voices = self.voice_count_spinbox.value()
-        mono_module = int(self.monophonic_module_combo_box.currentText(), 16)
-        poly_module = int(self.polyphonic_module_line_edit.text(), 16)
+        mono_module = int(self.monophonic_module_combobox.currentText(), 16)
+        poly_module = int(self.polyphonic_module_lineedit.text(), 16)
         min_voice = self.min_voice_spinbox.value()
         max_voice = self.max_voice_spinbox.value()
         poly_project = self.pattern_polyphonist.polyphonized_project(
