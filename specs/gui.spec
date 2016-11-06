@@ -3,10 +3,10 @@
 import os
 import sys
 
-import s4ils.scripts.gui
+import sails.scripts.gui
 import sunvox
 
-S4ILS_BASE_PATH = os.path.abspath(os.path.dirname(s4ils.__file__))
+SAILS_BASE_PATH = os.path.abspath(os.path.dirname(sails.__file__))
 SUNVOX_LIB_PATH = os.path.join(os.path.dirname(sunvox.__file__), 'lib')
 
 block_cipher = None
@@ -20,8 +20,8 @@ for ui_dir in [
     '/sun/vox',
 ]:
     datas.append((
-        '../s4ils/ui{}/*.ui'.format(ui_dir),
-        './s4ils/ui{}'.format(ui_dir),
+        '../sails/ui{}/*.ui'.format(ui_dir),
+        './sails/ui{}'.format(ui_dir),
     ))
 
 if sys.platform == 'win32':
@@ -47,8 +47,8 @@ elif sys.platform == 'darwin':
     ]
 
 a = Analysis(
-    [s4ils.scripts.gui.__file__],
-    pathex=[S4ILS_BASE_PATH],
+    [sails.scripts.gui.__file__],
+    pathex=[SAILS_BASE_PATH],
     binaries=[],
     datas=datas,
     hiddenimports=[],
@@ -70,7 +70,7 @@ exe = EXE(
     pyz,
     a.scripts,
     exclude_binaries=True,
-    name='s4ils-gui',
+    name='sails-gui',
     debug=False,
     strip=False,
     upx=True,
@@ -84,12 +84,12 @@ coll = COLLECT(
     a.datas,
     strip=False,
     upx=True,
-    name='s4ils-gui',
+    name='sails-gui',
 )
 
 app = BUNDLE(
     coll,
-    name='S4ils.app',
+    name='Solar Sails.app',
     icon=None,
     bundle_identifier=None,
     info_plist={

@@ -1,4 +1,4 @@
-from s4ils import *
+from sails import *
 
 
 def test_note_on_off():

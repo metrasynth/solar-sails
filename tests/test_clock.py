@@ -1,6 +1,6 @@
 from collections import deque
 
-from s4ils.clock import Clock
+from sails.clock import Clock
 
 
 def test_clock_accuracy():

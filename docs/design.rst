@@ -1,16 +1,16 @@
-Overall design of S4ils
+Overall design of Solar Sails
 =======================
 
-S4ils is a live production tool, specifically designed to leverage
+Solar Sails is a live production tool, specifically designed to leverage
 the features of SunVox via its DLL.
 
-The three pillars of the S4ils design:
+The three pillars of the Solar Sails design:
 
 - a set of control events generate changes to a set of command events
 - a set of command events alter the state of playback engines
 - timing of events are precisely synchronized to a shared clock
 
-In a S4ils session:
+In a Solar Sails session:
 
 - all events are time coded by (beat, tick), relative to start of session playback
 - a session is persisted with all external resources bundled into a directory
@@ -18,8 +18,8 @@ In a S4ils session:
 - a set of all control events and command events are always persisted
 - raw master audio output is optionally persisted
 
-A S4ils session can be exported as a playable SunVox project,
-for use such as embedding into another S4ils session,
+A Solar Sails session can be exported as a playable SunVox project,
+for use such as embedding into another Solar Sails session,
 or further mastering using SunVox or other tools.
 
 
