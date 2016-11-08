@@ -1,57 +1,9 @@
-Solar Sails: Augmentation and Interactive Live-coding for SunVox
-================================================================
+Overview of Solar Sails
+=======================
+
+..  start-badges
 
 |buildstatus| |docs|
-
-Part of the Metrasynth_ project.
-
-.. _Metrasynth: https://metrasynth.github.io/
-
-
-Purpose
--------
-
-Solar Sails aims to provide powerful and flexible tools
-to augment the SunVox_ modular music studio.
-
-..  _SunVox:
-    http://warmplace.ru/soft/sunvox/
-
-Current tools include:
-
-Polyphonist
-    Transforms monophonic-only metamodules into polyphonic equivalents.
-
-Visit the `Solar Sails docs`_ for more information.
-
-..  _Solar Sails docs:
-    https://solar-sails.readthedocs.io/en/latest/
-
-
-Requirements
-------------
-
-- Python 3.5
-
-
-Quick start
------------
-
-Solar Sails is not yet published to PyPI,
-so please install using git for the time being.
-Here's an example using Linux/macOS::
-
-    $ git clone https://github.com/metrasynth/sunvox-dll-python
-    $ git clone https://github.com/metrasynth/orbitant
-    $ git clone https://github.com/metrasynth/radiant-voices
-    $ git clone https://github.com/metrasynth/solar-flares
-    $ git clone https://github.com/metrasynth/solar-sails
-    $ pip install -e sunvox-dll-python
-    $ pip install -e orbitant
-    $ pip install -e radiant-voices
-    $ pip install -e solar-flares
-    $ pip install -e solar-sails
-
 
 .. |buildstatus| image:: https://img.shields.io/travis/metrasynth/solar-sails.svg?style=flat
     :alt: build status
@@ -62,3 +14,44 @@ Here's an example using Linux/macOS::
     :alt: Documentation Status
     :scale: 100%
     :target: https://solar-sails.readthedocs.io/en/latest/?badge=latest
+
+..  end-badges
+
+Part of the Metrasynth_ project.
+
+.. _Metrasynth: https://metrasynth.github.io/
+
+
+Purpose
+-------
+
+"SunVox Augmentation and Interactive Live-coding System"
+
+Solar Sails is a cross-platform app that augments the SunVox_
+modular music studio.
+
+..  _SunVox:
+    http://warmplace.ru/soft/sunvox/
+
+It combines `Radiant Voices`_, `Solar Flares`_, and sunvox-dll-python_
+into a downloadable app that provides a workspace to make use of those tools.
+
+..  _Radiant Voices:
+    https://radiant-voices.readthedocs.io/
+
+..  _Solar Flares:
+    https://solar-flares.readthedocs.io/
+
+..  _sunvox-dll-python:
+    https://sunvox-dll-python.readthedocs.io/
+
+
+Requirements
+------------
+
+- Python 3.5
+
+- OS supported by PyQt5_ and sunvox-dll-python_.
+
+..  _PyQt5:
+    https://pypi.org/project/PyQt5/
