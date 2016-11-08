@@ -1,10 +1,10 @@
 from collections import deque
 
-from sails.clock import Clock
+from sails.clock import BasicClock
 
 
 def test_clock_accuracy():
-    c = Clock()
+    c = BasicClock()
     ticks = deque()
     for x in range(10):
         c.advance()
