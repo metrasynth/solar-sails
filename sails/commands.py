@@ -1,4 +1,4 @@
-import rv
+import rv.api
 
 
 class Command(object):

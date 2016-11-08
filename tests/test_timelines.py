@@ -1,4 +1,4 @@
-from sails import *
+from sails.api import *
 
 
 def test_note_on_off():

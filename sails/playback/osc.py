@@ -9,11 +9,11 @@ from uuid import uuid4
 
 from pythonosc import osc_server, udp_client
 from pythonosc.osc_message_builder import OscMessageBuilder
-import rv
+import rv.api
 import sunvox
 from sunvosc.dispatcher import PeerDispatcher
 
-from sails import c
+from sails.api import c
 from sails.clock import BasicClock
 from sails.session import CommandCursor
 

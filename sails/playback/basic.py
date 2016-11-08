@@ -6,7 +6,7 @@ from tempfile import mkstemp
 import rv
 import sunvox
 
-from sails import c
+from sails.api import c
 from sails.clock import BasicClock
 from sails.session import CommandCursor
 
