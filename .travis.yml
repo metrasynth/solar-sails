@@ -1,0 +1,15 @@
+language: python
+python:
+  - "3.5"
+  - "3.5-dev"
+install:
+  - "sudo apt-get -qq update"
+  - "sudo apt-get -y install libsdl1.2-dev graphviz"
+  - "pip install git+https://github.com/metrasynth/orbitant"
+  - "pip install git+https://github.com/metrasynth/sunvox-dll-python"
+  - "pip install git+https://github.com/metrasynth/radiant-voices"
+  - "pip install git+https://github.com/metrasynth/solar-flares"
+  - "pip install git+https://github.com/metrasynth/sunvosc"
+  - "pip install -r requirements/tests.txt"
+  - "pip install ."
+script: py.test
