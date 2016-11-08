@@ -1,22 +1,14 @@
-"""
-Solar Sails aims to provide powerful and flexible tools
-to augment the SunVox_ modular music studio.
+"""SunVox Augmentation and Interactive Live-coding System"""
 
-..  _SunVox:
-    http://warmplace.ru/soft/sunvox/
-
-Current tools include:
-
-Polyphonist
-    Transforms monophonic-only metamodules into polyphonic equivalents.
-
-Visit the `Solar Sails docs`_ for more information.
-
-..  _Solar Sails docs:
-    http://solar-sails.rtfd.io/
-"""
-
+import io
+import os
+import re
 from setuptools import find_packages, setup
+import sys
+
+SETUP_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+sys.path.append(SETUP_DIR)
+import sails
 
 dependencies = [
     'ipykernel',
@@ -30,15 +22,26 @@ dependencies = [
     'sunvosc',
 ]
 
+
+def read(*names, **kwargs):
+    return io.open(
+        os.path.join(os.path.dirname(__file__), *names),
+        encoding=kwargs.get('encoding', 'utf8')
+    ).read()
+
+
 setup(
     name='solar-sails',
-    version='0.1.0',
+    version=sails.__version__,
     url='https://github.com/metrasynth/solar-sails',
     license='MIT',
     author='Matthew Scott',
     author_email='matt@11craft.com',
-    description='Solar Sails: Augmentation and Interactive Live-coding for SunVox',
-    long_description=__doc__,
+    description=__doc__,
+    long_description='%s\n%s' % (
+        re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),
+        re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))
+    ),
     packages=find_packages(exclude=['docs', 'examples', 'tests']),
     include_package_data=True,
     zip_safe=False,
