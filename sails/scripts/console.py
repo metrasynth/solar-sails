@@ -9,9 +9,11 @@ def launch_console():
 
 def patch_keepserver():
     orig_interact = ZMQTerminalInteractiveShell.interact
+
     def interact(self, display_banner=None):
         self.keepkernel = True
         return orig_interact(self, display_banner)
+
     ZMQTerminalInteractiveShell.interact = interact
 
 

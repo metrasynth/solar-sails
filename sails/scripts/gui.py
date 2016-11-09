@@ -2,14 +2,14 @@ import asyncio
 import sys
 
 import begin
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QMainWindow
 from quamash import QEventLoop
-
 from sails.ui.app import App
 from sails.ui.mainmenubar import MainMenuBar
-from sails.ui.welcomewidget import WelcomeWidget
 from sails.ui.openers import Opener
-import sails.ui.sun
+from sails.ui.welcomewidget import WelcomeWidget
+
+import sails.ui.sun  # NOQA isort:skip
 
 
 @begin.start

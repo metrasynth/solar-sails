@@ -1,14 +1,12 @@
-from collections import OrderedDict
 import os
 import time
+from collections import OrderedDict
 from tempfile import mkstemp
 
-import rv
-import sunvox
-
+import rv.api
+import sunvox.api
 from sails.api import c
 from sails.clock import BasicClock
-from sails.session import CommandCursor
 
 
 class BasicPlayback(object):
@@ -40,7 +38,7 @@ class BasicPlayback(object):
             process = sunvox
             process.init(None, 44100, 2, 0)
             self.engine_processes[command] = process
-            self.engine_slots[command] = sunvox.Slot(process=process)
+            self.engine_slots[command] = sunvox.api.Slot(process=process)
         elif isinstance(command, c.Generator):
             self.generators[command] = (-1, 0)
             command.start()
@@ -49,7 +47,7 @@ class BasicPlayback(object):
             command.parent.generator = None
         elif isinstance(command, c.Module):
             fd, name = mkstemp('.sunsynth')
-            os.write(fd, rv.Synth(command.module).read())
+            os.write(fd, rv.api.Synth(command.module).read())
             os.close(fd)
             slot = self.engine_slots[command.engine]
             index = slot.load_module(name.encode('utf8'), x=0, y=0, z=0)
@@ -59,7 +57,7 @@ class BasicPlayback(object):
             slot = self.engine_slots[command.engine]
             slot.send_event(
                 track_num=command.track.index,
-                note=sunvox.NOTECMD.NOTE_OFF,
+                note=sunvox.api.NOTECMD.NOTE_OFF,
                 vel=0,
                 module=0,
                 ctl=0,

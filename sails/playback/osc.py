@@ -1,21 +1,17 @@
-from collections import OrderedDict
-import io
 import logging
 import os
-from tempfile import mkstemp
 import threading
-from time import time, sleep
+from collections import OrderedDict
+from tempfile import mkstemp
+from time import sleep, time
 from uuid import uuid4
 
-from pythonosc import osc_server, udp_client
-from pythonosc.osc_message_builder import OscMessageBuilder
 import rv.api
 import sunvox
-from sunvosc.dispatcher import PeerDispatcher
-
+from pythonosc import osc_server, udp_client
+from pythonosc.osc_message_builder import OscMessageBuilder
 from sails.api import c
-from sails.clock import BasicClock
-from sails.session import CommandCursor
+from sunvosc.dispatcher import PeerDispatcher
 
 
 class OscPlayback(object):
@@ -63,7 +59,10 @@ class OscPlayback(object):
                 src = src.index
             dest = command.dest
             if hasattr(dest, 'index'):
-                while dest.index is None and dest.tag not in self.dispatcher.module_numbers[0]:
+                while (
+                    dest.index is None
+                    and dest.tag not in self.dispatcher.module_numbers[0]
+                ):
                     sleep(0)
                 if dest.index is None:
                     dest.index = module_numbers[dest.tag]
@@ -75,7 +74,8 @@ class OscPlayback(object):
             self.client.send(msg)
         elif isinstance(command, c.Engine):
             if self.engine is not None:
-                logging.warning('Only one engine is supported for OSC playback')
+                logging.warning(
+                    'Only one engine is supported for OSC playback')
             else:
                 self.engine = command
                 b = OscMessageBuilder('/slot0/init')

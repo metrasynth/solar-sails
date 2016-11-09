@@ -3,10 +3,9 @@ import os
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.uic import loadUiType
 
-from sf.polyphonist import ModulePolyphonist, PatternPolyphonist
-
 from sails.ui import App
 from sails.ui.polyphonist.polyphonistmainmenubar import PolyphonistMainMenuBar
+from sf.polyphonist import ModulePolyphonist, PatternPolyphonist
 
 UIC_NAME = 'polyphonistmainwindow.ui'
 UIC_PATH = os.path.join(os.path.dirname(__file__), UIC_NAME)
@@ -15,7 +14,8 @@ UIC_PATH = os.path.join(os.path.dirname(__file__), UIC_NAME)
 Ui_PolyphonistMainWindow, PolyphonistMainWindowBase = loadUiType(UIC_PATH)
 
 
-class PolyphonistMainWindow(PolyphonistMainWindowBase, Ui_PolyphonistMainWindow):
+class PolyphonistMainWindow(PolyphonistMainWindowBase,
+                            Ui_PolyphonistMainWindow):
 
     def __init__(self):
         super(PolyphonistMainWindow, self).__init__(None)
@@ -117,7 +117,6 @@ class PolyphonistMainWindow(PolyphonistMainWindowBase, Ui_PolyphonistMainWindow)
 
     @pyqtSlot()
     def on_polyphonize_pattern_button_clicked(self):
-        voices = self.voice_count_spinbox.value()
         mono_module = int(self.monophonic_module_combobox.currentText(), 16)
         poly_module = int(self.polyphonic_module_lineedit.text(), 16)
         min_voice = self.min_voice_spinbox.value()

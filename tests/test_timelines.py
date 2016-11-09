@@ -1,4 +1,4 @@
-from sails.api import *
+from sails.api import INIT, Session, c, n
 
 
 def test_note_on_off():

@@ -154,7 +154,8 @@ class CommandCursor(object):
         if isinstance(other, tuple) and len(other) == 2:
             beats, ticks = other
             ticks += beats * TICKS_PER_BEAT
-            return self.__class__(self.s, self.ticks + ticks, origin=self.origin)
+            return self.__class__(self.s, self.ticks + ticks,
+                                  origin=self.origin)
 
     def __sub__(self, other):
         if isinstance(other, int):

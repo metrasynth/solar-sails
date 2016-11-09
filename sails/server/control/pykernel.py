@@ -2,9 +2,6 @@ from ipykernel.kernelapp import IPKernelApp
 from ipykernel.zmqshell import ZMQInteractiveShell
 from IPython.core.autocall import ZMQExitAutocall
 
-import sails.api
-
-
 
 class KeepAlive(ZMQExitAutocall):
     def __call__(self, keep_kernel=True):

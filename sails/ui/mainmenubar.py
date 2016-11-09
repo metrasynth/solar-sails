@@ -1,7 +1,7 @@
 import logging
 
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import qApp, QAction, QMenuBar
+from PyQt5.QtWidgets import QAction, QMenuBar, qApp
 
 from sails.ui.openers import AnyOpener
 from sails.ui.settings.settingsdialog import SettingsDialog
@@ -61,7 +61,8 @@ class MainMenuBar(QMenuBar):
     @pyqtSlot()
     def on_tools_polyphonist_triggered(self):
         if not hasattr(qApp, '_tools_polyphonist'):
-            from sails.ui.polyphonist.polyphonistmainwindow import PolyphonistMainWindow
+            from sails.ui.polyphonist.polyphonistmainwindow \
+                import PolyphonistMainWindow
             qApp._tools_polyphonist = PolyphonistMainWindow()
         qApp._tools_polyphonist.show()
         qApp._tools_polyphonist.setFocus(True)
