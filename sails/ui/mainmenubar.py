@@ -25,8 +25,11 @@ class MainMenuBar(QMenuBar):
         self.file_exit = QAction(
             'E&xit', self,
             triggered=self.on_file_exit_triggered)
+        self.tools_mmck = QAction(
+            '&MetaModule Construction Kit...', self,
+            triggered=self.on_tools_mmck_triggered)
         self.tools_polyphonist = QAction(
-            'Solar Flares &Polyphonist...', self,
+            '&Polyphonist...', self,
             triggered=self.on_tools_polyphonist_triggered)
 
     def create_menus(self):
@@ -35,10 +38,12 @@ class MainMenuBar(QMenuBar):
         self.file_menu.addAction(self.file_settings)
         self.file_menu.addAction(self.file_exit)
         self.tools_menu = self.addMenu('&Tools')
+        self.tools_menu.addAction(self.tools_mmck)
         self.tools_menu.addAction(self.tools_polyphonist)
 
     def create_shortcuts(self):
         self.file_open.setShortcut('Ctrl+O')
+        self.tools_mmck.setShortcut('Ctrl+Shift+M')
         self.tools_polyphonist.setShortcut('Ctrl+Shift+P')
 
     @pyqtSlot()
@@ -57,6 +62,14 @@ class MainMenuBar(QMenuBar):
     @pyqtSlot()
     def on_file_settings_triggered(self):
         SettingsDialog(None).show()
+
+    @pyqtSlot()
+    def on_tools_mmck_triggered(self):
+        if not hasattr(qApp, '_tools_mmck'):
+            from sails.ui.mmck.mmckmainwindow import MmckMainWindow
+            qApp._tools_mmck = MmckMainWindow()
+        qApp._tools_mmck.show()
+        qApp._tools_mmck.setFocus(True)
 
     @pyqtSlot()
     def on_tools_polyphonist_triggered(self):
