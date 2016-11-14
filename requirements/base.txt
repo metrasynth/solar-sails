@@ -8,3 +8,5 @@ radiant-voices
 sunvox-dll-python
 solar-flares
 sunvosc
+
+git+https://github.com/andreikop/qutepart#egg=qutepart

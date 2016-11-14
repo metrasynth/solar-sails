@@ -1,9 +1,6 @@
 import os
 
-from PyQt5.QtCore import pyqtSlot
 from PyQt5.uic import loadUiType
-
-from sails.ui import App
 from sails.ui.mmck.mmckmainmenubar import MmckMainMenuBar
 from sails.ui.mmck.mmckmainwidget import MmckMainWidget
 
