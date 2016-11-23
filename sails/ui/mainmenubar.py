@@ -66,7 +66,7 @@ class MainMenuBar(QMenuBar):
     @pyqtSlot()
     def on_tools_mmck_triggered(self):
         if not hasattr(qApp, '_tools_mmck'):
-            from sails.ui.mmck.mmckmainwindow import MmckMainWindow
+            from sails.ui.mmck.mainwindow import MmckMainWindow
             qApp._tools_mmck = MmckMainWindow()
         qApp._tools_mmck.show()
         qApp._tools_mmck.setFocus(True)

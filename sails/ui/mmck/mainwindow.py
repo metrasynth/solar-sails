@@ -1,10 +1,10 @@
 import os
 
 from PyQt5.uic import loadUiType
-from sails.ui.mmck.mmckmainmenubar import MmckMainMenuBar
-from sails.ui.mmck.mmckmainwidget import MmckMainWidget
+from sails.ui.mmck.mainmenubar import MmckMainMenuBar
+from sails.ui.mmck.mainwidget import MmckMainWidget
 
-UIC_NAME = 'mmckmainwindow.ui'
+UIC_NAME = 'mainwindow.ui'
 UIC_PATH = os.path.join(os.path.dirname(__file__), UIC_NAME)
 
 

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1352</width>
+    <width>1237</width>
     <height>843</height>
    </rect>
   </property>
@@ -15,6 +15,18 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
     <item>
      <widget class="QScrollArea" name="scroll_area">
       <property name="verticalScrollBarPolicy">
@@ -28,8 +40,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1326</width>
-         <height>774</height>
+         <width>1235</width>
+         <height>798</height>
         </rect>
        </property>
       </widget>
@@ -42,7 +54,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1352</width>
+     <width>1237</width>
      <height>22</height>
     </rect>
    </property>
