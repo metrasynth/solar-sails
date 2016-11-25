@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.uic import loadUiType
 
 from sails.ui.settings.audiosettingswidget import AudioSettingsWidget
+from sails.ui.settings.midisettingswidget import MidiSettingsWidget
 from sails.ui.settings.sunvoxsettingswidget import SunVoxSettingsWidget
 
 UIC_NAME = 'settingsdialog.ui'
@@ -38,6 +39,9 @@ class SettingsDialog(SettingsDialogBase, Ui_SettingsDialog):
         layout = QVBoxLayout(self.audio_tab)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(AudioSettingsWidget(self.audio_tab))
+        layout = QVBoxLayout(self.midi_tab)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(MidiSettingsWidget(self.midi_tab))
         layout = QVBoxLayout(self.sunvox_tab)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(SunVoxSettingsWidget(self.sunvox_tab))

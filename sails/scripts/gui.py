@@ -4,6 +4,7 @@ import sys
 import begin
 from PyQt5.QtWidgets import QMainWindow
 from quamash import QEventLoop
+from sails.lib.mido import midi
 from sails.ui.app import App
 from sails.ui.mainmenubar import MainMenuBar
 from sails.ui.openers import Opener
@@ -16,6 +17,7 @@ import sails.ui.sun  # NOQA isort:skip
 @begin.logging
 def main(*filenames: 'Files to open immediately'):
     """Start the Solar Sails GUI."""
+    midi.get_input_names()
     app = App(sys.argv)
     loop = QEventLoop(app)
     asyncio.set_event_loop(loop)

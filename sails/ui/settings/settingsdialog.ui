@@ -19,14 +19,19 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <widget class="QWidget" name="sunvox_tab">
+      <attribute name="title">
+       <string>SunVox</string>
+      </attribute>
+     </widget>
      <widget class="QWidget" name="audio_tab">
       <attribute name="title">
        <string>Audio</string>
       </attribute>
      </widget>
-     <widget class="QWidget" name="sunvox_tab">
+     <widget class="QWidget" name="midi_tab">
       <attribute name="title">
-       <string>SunVox</string>
+       <string>MIDI</string>
       </attribute>
      </widget>
     </widget>
