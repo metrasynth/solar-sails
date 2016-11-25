@@ -61,15 +61,19 @@ class WorkspacePathsItemModel(QStandardItemModel):
 
     def _load_settings(self):
         App.settings.beginGroup('sunvox')
-        paths = App.settings.value('workspace_paths')
-        if paths is not None:
-            self._paths = paths
-            self.clear()
-            for path in paths:
-                self.appendRow(QStandardItem(path))
-        App.settings.endGroup()
+        try:
+            paths = App.settings.value('workspace_paths')
+            if paths is not None:
+                self._paths = paths
+                self.clear()
+                for path in paths:
+                    self.appendRow(QStandardItem(path))
+        finally:
+            App.settings.endGroup()
 
     def _save_settings(self):
         App.settings.beginGroup('sunvox')
-        App.settings.setValue('workspace_paths', self._paths)
-        App.settings.endGroup()
+        try:
+            App.settings.setValue('workspace_paths', self._paths)
+        finally:
+            App.settings.endGroup()
