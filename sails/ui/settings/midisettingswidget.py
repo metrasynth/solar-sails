@@ -2,7 +2,8 @@ import os
 
 from PyQt5.QtCore import QStringListModel, pyqtSlot
 from PyQt5.uic import loadUiType
-from sails.lib.mido import midi
+from sails.lib import mido
+from sails import midi
 from sails.ui import App
 
 UIC_NAME = 'midisettingswidget.ui'
@@ -23,7 +24,7 @@ class MidiSettingsWidget(MidiSettingsWidgetBase, Ui_MidiSettingsWidget):
 
     def setup_model(self):
         self.midi_in_model = QStringListModel()
-        self.midi_in_model.setStringList(midi.get_input_names())
+        self.midi_in_model.setStringList(mido.backend.get_input_names())
         self.midi_in_listview.setModel(self.midi_in_model)
         self.midi_in_listview.selectionModel().selectionChanged.connect(
             self.on_midi_in_selection_changed)
@@ -56,7 +57,6 @@ class MidiSettingsWidget(MidiSettingsWidgetBase, Ui_MidiSettingsWidget):
         try:
             paths = App.settings.value('in_devices')
             paths = set(paths) if paths is not None else set()
-            print('loading', paths)
             self.midi_in_selected = paths
         finally:
             App.settings.endGroup()
@@ -69,9 +69,9 @@ class MidiSettingsWidget(MidiSettingsWidgetBase, Ui_MidiSettingsWidget):
             paths.update(self.midi_in_selected)
             paths -= self.midi_in_unselected
             App.settings.setValue('in_devices', list(sorted(paths)))
-            print('saving', App.settings.value('in_devices'))
         finally:
             App.settings.endGroup()
+        midi.listener.update_ports()
 
     @pyqtSlot()
     def on_midi_in_refresh_button_clicked(self):
