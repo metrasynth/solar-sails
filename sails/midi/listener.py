@@ -14,14 +14,20 @@ class MidiListener(QObject):
         self.port_listeners = {
             # port_name: (port, listener),
         }
+        self.virtual_ports = set()
 
-    def start_port_listener(self, port_name):
+    def start_port_listener(self, port_name, virtual=False):
         available = mido.backend.get_input_names()
-        if port_name not in self.port_listeners and port_name in available:
+        if (port_name not in self.port_listeners
+            and (virtual or port_name in available)
+            ):
             def listener(message):
                 self.message_received.emit(port_name, message)
-            port = mido.backend.open_input(port_name, callback=listener)
+            port = mido.backend.open_input(
+                port_name, callback=listener, virtual=virtual)
             self.port_listeners[port_name] = (port, listener)
+            if virtual:
+                self.virtual_ports.add(port_name)
 
     def stop(self):
         for port_name, (port, _) in list(self.port_listeners.items()):
@@ -35,7 +41,8 @@ class MidiListener(QObject):
         finally:
             App.settings.endGroup()
         for port_name, (port, _) in list(self.port_listeners.items()):
-            if port_name not in port_names:
+            is_virtual = port_name in self.virtual_ports
+            if port_name not in port_names and not is_virtual:
                 port.close()
                 del self.port_listeners[port_name]
         for port_name in port_names:
