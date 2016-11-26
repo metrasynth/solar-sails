@@ -114,11 +114,15 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
         self.slot.load(module.project)
         self.controllers_manager.root_group = module.c
 
-    def set_compile_buttons_enabled(self):
-        self.parameter_compile_button.setEnabled(
+    def set_compile_actions_enabled(self):
+        self.action_compile_parameters.setEnabled(
             not self.kit.parameter_factory_source_clean)
-        self.project_compile_button.setEnabled(
+        self.action_compile_project.setEnabled(
             not self.kit.project_factory_source_clean)
+        self.parameter_compile_button.setEnabled(
+            self.action_compile_parameters.isEnabled())
+        self.project_compile_button.setEnabled(
+            self.action_compile_project.isEnabled())
 
     def set_controllers_width(self):
         self.scrollarea_4.setMinimumWidth(
@@ -145,7 +149,7 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
             b.show()
         else:
             b.hide()
-        self.set_compile_buttons_enabled()
+        self.set_compile_actions_enabled()
         QTimer.singleShot(1, self.set_parameters_width)
 
     @pyqtSlot()
@@ -160,7 +164,7 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
         else:
             b.hide()
             self.kit.parameter_values_dirty = False
-        self.set_compile_buttons_enabled()
+        self.set_compile_actions_enabled()
         QTimer.singleShot(1, self.set_controllers_width)
 
     @pyqtSlot(int, str)
@@ -187,7 +191,7 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
     @pyqtSlot()
     def on_parameter_editor_debouncer_timeout(self):
         self.set_parameters_source()
-        self.set_compile_buttons_enabled()
+        self.set_compile_actions_enabled()
 
     @pyqtSlot()
     def on_parameter_editor_textChanged(self):
@@ -201,12 +205,12 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
     @pyqtSlot()
     def on_parameters_manager_valuesChanged(self):
         self.kit.parameter_values_dirty = True
-        self.set_compile_buttons_enabled()
+        self.set_compile_actions_enabled()
 
     @pyqtSlot()
     def on_project_editor_debouncer_timeout(self):
         self.set_project_source()
-        self.set_compile_buttons_enabled()
+        self.set_compile_actions_enabled()
 
     @pyqtSlot()
     def on_project_editor_textChanged(self):

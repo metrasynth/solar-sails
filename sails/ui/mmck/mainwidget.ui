@@ -47,9 +47,6 @@
            <property name="text">
             <string>Compile →</string>
            </property>
-           <property name="shortcut">
-            <string>Meta+Shift+P</string>
-           </property>
           </widget>
          </item>
          <item>
@@ -155,9 +152,6 @@
            </property>
            <property name="text">
             <string>Compile →</string>
-           </property>
-           <property name="shortcut">
-            <string>Meta+Shift+J</string>
            </property>
           </widget>
          </item>
@@ -267,6 +261,9 @@
    <property name="text">
     <string>Compile Parameters</string>
    </property>
+   <property name="shortcut">
+    <string>Meta+Shift+P</string>
+   </property>
   </action>
   <action name="action_compile_project">
    <property name="text">
@@ -274,6 +271,9 @@
    </property>
    <property name="toolTip">
     <string>Compile Project</string>
+   </property>
+   <property name="shortcut">
+    <string>Meta+Shift+J</string>
    </property>
   </action>
  </widget>

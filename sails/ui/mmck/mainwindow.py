@@ -22,3 +22,12 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         self.setMenuBar(MmckMainMenuBar())
         self.main_widget = MmckMainWidget(self)
         self.scroll_area.setWidget(self.main_widget)
+        self.setup_menus()
+
+    def setup_menus(self):
+        menubar = self.menuBar()
+        for action in [
+            self.main_widget.action_compile_parameters,
+            self.main_widget.action_compile_project,
+        ]:
+            menubar.code_menu.addAction(action)
