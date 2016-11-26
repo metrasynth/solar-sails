@@ -53,6 +53,8 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
             layout=self.layout_4,
             root_group=EMPTY_GROUP,
         )
+        self.controllers_manager.value_changed.connect(
+            self.on_controllers_manager_value_changed)
 
     def setup_midi_routing(self):
         midi.listener.message_received.connect(
@@ -160,6 +162,13 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
             self.kit.parameter_values_dirty = False
         self.set_compile_buttons_enabled()
         QTimer.singleShot(1, self.set_controllers_width)
+
+    @pyqtSlot(int, str)
+    def on_controllers_manager_value_changed(self, value, name):
+        controller = self.kit.project_module.c[name]
+        mod = controller.module.index + 1
+        ctl = controller.ctl.number
+        self.slot.send_event(0, 0, 0, mod, ctl << 8, value)
 
     @pyqtSlot(str, 'PyQt_PyObject')
     def on_midi_listener_message_received(self, port_name, message):

@@ -1,5 +1,6 @@
 import os
 
+from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 from PyQt5.uic import loadUiType
 
@@ -11,6 +12,8 @@ Ui_RangeWidget, RangeWidgetBase = loadUiType(UIC_PATH)
 
 
 class RangeWidget(RangeWidgetBase, Ui_RangeWidget):
+
+    value_changed = pyqtSignal(int)
 
     def __init__(self, parent, value_type, initial_value):
         self.value_type = value_type
@@ -29,3 +32,7 @@ class RangeWidget(RangeWidgetBase, Ui_RangeWidget):
         self.slider.setValue(self.initial_value)
         self.min_label.setText(str(min_value))
         self.max_label.setText(str(max_value))
+
+    @pyqtSlot(int)
+    def on_spinbox_valueChanged(self, value):
+        self.value_changed.emit(value)

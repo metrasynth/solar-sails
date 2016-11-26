@@ -1,6 +1,6 @@
 from enum import Enum
 
-from PyQt5.QtCore import QObject
+from PyQt5.QtCore import QObject, pyqtSignal
 from PyQt5.QtWidgets import QGroupBox, QLabel, QVBoxLayout, QWidget
 from rv.controller import Range
 from sf.mmck.project import Controller, Group
@@ -11,10 +11,11 @@ from .range import RangeWidget
 
 class ControllersManager(QObject):
 
-    _root_group = None
+    value_changed = pyqtSignal(int, str)  # value, name
 
     def __init__(self, parent, layout, root_group):
         super().__init__(parent)
+        self._root_group = None
         self.widgets = {}
         self.root_layout = layout
         self.root_group = root_group
@@ -57,6 +58,7 @@ class ControllersManager(QObject):
                 )
                 layout.addWidget(widget)
                 self.widgets[key] = widget
+                widget.value_changed.connect(self.value_changed)
             elif isinstance(value, Group):
                 subprefix = name + '.'
                 groupbox = GroupWidget(
@@ -78,8 +80,11 @@ class ControllersManager(QObject):
 
 class ControllerWidget(QWidget):
 
+    value_changed = pyqtSignal(int, str)  # value, name
+
     def __init__(self, parent, name, controller):
         super().__init__(parent)
+        self.name = name
         module = controller.module
         ctl = controller.ctl
         value = controller.value
@@ -99,6 +104,10 @@ class ControllerWidget(QWidget):
             w = widget_class(parent=self, value_type=t, initial_value=value)
             layout.addWidget(label)
             layout.addWidget(w)
+            w.value_changed.connect(self.on_child_value_changed)
+
+    def on_child_value_changed(self, value):
+        self.value_changed.emit(value, self.name)
 
 
 class GroupWidget(QGroupBox):
