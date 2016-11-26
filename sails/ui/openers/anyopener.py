@@ -8,10 +8,10 @@ class AnyOpener(Opener):
     def __init__(self, parent):
         super(AnyOpener, self).__init__(parent)
 
-    @property
-    def filter(self):
+    @classmethod
+    def filter(cls):
         return 'Supported Files ({})'.format(
             ' '.join(
-                '*{}'.format(file_ext) for file_ext in self._opener_classes
+                '*{}'.format(file_ext) for file_ext in cls._opener_classes
             )
         )

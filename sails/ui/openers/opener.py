@@ -25,9 +25,13 @@ class Opener(object):
     def caption(self):
         return 'Open {} file'.format(self.file_type_label)
 
-    @property
-    def filter(self):
-        return '{} Files (*{})'.format(self.file_type_label, self.file_ext)
+    @classmethod
+    def filter(cls):
+        return '{} Files (*{})'.format(cls.file_type_label, cls.file_ext)
+
+    @classmethod
+    def main_window(cls, filename):
+        return cls.main_window_class(filename=filename)
 
     @classmethod
     def open_file(cls, filename):
@@ -51,7 +55,7 @@ class Opener(object):
     @classmethod
     def new_or_existing_window(cls, filename):
         if filename not in cls._open_file_windows:
-            window = cls.main_window_class(filename=filename)
+            window = cls.main_window(filename)
             cls._open_file_windows[filename] = window
             window.setWindowFilePath(filename)
             logging.debug('File %r opened', filename)
@@ -65,7 +69,7 @@ class Opener(object):
             parent=self.parent,
             caption=self.caption,
             directory=directory,
-            filter=self.filter,
+            filter=self.filter(),
         )
 
     def exec_(self, filename=None):

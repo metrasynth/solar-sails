@@ -221,13 +221,29 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
         t.timeout.connect(self.on_project_editor_debouncer_timeout)
         t.start(DEBOUNCE_MSEC)
 
+    def load_json(self, data):
+        self.kit.load_json(data)
+        self.parameters_manager.clear_widgets()
+        self.controllers_manager.clear_widgets()
+        self.parameter_editor.setPlainText(self.kit.parameter_factory_source)
+        self.project_editor.setPlainText(self.kit.project_factory_source)
+
 
 SAMPLE_PARAMETER_FACTORY = """\
 from sf.mmck.parameters import *
 
+# Define your parameters below by adding to the
+# `p` object.
+#
+# You can define String or Integer parameters.
+#
+# Example:
+#
+#   p.name = String(label='Project Name')
+#   p.voices = Integer(5, range=(3, 17), step=2)
+#   p.spread = Integer(5, range=(0, 128))
+
 p.name = String(label='Project Name')
-p.voices = Integer(5, range=(3, 17), step=2)
-p.spread = Integer(5, range=(0, 128))
 """
 
 
@@ -235,34 +251,27 @@ SAMPLE_PROJECT_FACTORY = """\
 from sf.mmck.project import *
 from rv.api import *
 
-project.name = p.name or ''
+# Construct the MetaModule interior by
+# attaching modules to the `project` object.
+# Consult the `rv` documentation for details.
+# http://radiant-voices.rtfd.io/
+#
+# Expose controllers you'd like to manipulate
+# by adding them to the `c` object, using
+# `(module, ctl_name)` notation.
+#
+# Group them together using `Group` objects.
+#
+# Example:
+#
+#   gen = project.new_module(
+#       m.AnalogGenerator,
+#       polyphony_ch=1,
+#       sustain=False,
+#   )
+#   gen >> project.output
+#   c.attack = (gen, 'attack')
+#   c.release = (gen, 'release')
 
-multi = project.new_module(
-    m.MultiSynth,
-    random_phase=32768,
-)
-start = -(p.voices - 1) // 2
-end = start + p.voices
-generators = [
-    project.new_module(
-        m.AnalogGenerator,
-        volume=256,
-        attack=150,
-        release=242,
-        polyphony_ch=1,
-        sustain=False,
-        waveform=m.AnalogGenerator.Waveform.saw,
-        finetune=x * p.spread,
-    )
-    for x in range(start, end)
-]
-multi >> generators >> project.output
-
-project.layout()
-
-c.random_phase = (multi, 'random_phase')
-
-c.waveforms = Group()
-for i, module in enumerate(generators, 1):
-    c.waveforms['generator_{}'.format(i)] = (module, 'waveform')
+project.name = p.name or 'My Synth'
 """
