@@ -175,7 +175,8 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
         controller = self.kit.project_module.c[name]
         mod = controller.module.index + 1
         ctl = controller.ctl.number
-        self.slot.send_event(0, 0, 0, mod, ctl << 8, value)
+        pvalue = controller.ctl.pattern_value(value)
+        self.slot.send_event(0, 0, 0, mod, ctl << 8, pvalue)
 
     @pyqtSlot(str, 'PyQt_PyObject')
     def on_midi_listener_message_received(self, port_name, message):
