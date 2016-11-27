@@ -121,8 +121,7 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
     def set_compile_actions_enabled(self):
         self.action_compile_parameters.setEnabled(
             not self.kit.parameter_factory_source_clean)
-        self.action_compile_project.setEnabled(
-            not self.kit.project_factory_source_clean)
+        self.action_compile_project.setEnabled(True)
         self.parameter_compile_button.setEnabled(
             self.action_compile_parameters.isEnabled())
         self.project_compile_button.setEnabled(
