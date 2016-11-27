@@ -39,6 +39,7 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
         self.setup_project_editor()
         self.setup_controllers()
         self.setup_sunvox_process()
+        self.setup_sunvox_slot()
         self.setup_midi_routing()
         self.stub4 = QFrame(self)
         self.stub5 = QFrame(self)
@@ -97,8 +98,12 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
     def setup_sunvox_process(self):
         self.sunvox = Process()
         self.sunvox.init(None, 44100, 2, 0)
-        self.slot = Slot(process=self.sunvox)
         qApp.aboutToQuit.connect(self.shutdown_sunvox_process)
+
+    def setup_sunvox_slot(self):
+        if hasattr(self, 'slot'):
+            self.slot.close()
+        self.slot = Slot(process=self.sunvox)
 
     def shutdown_sunvox_process(self):
         self.sunvox.deinit()
@@ -109,8 +114,7 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
 
     def compile_project(self):
         module = self.kit.project_module
-        self.slot.send_event(0, NOTECMD.ALL_NOTES_OFF, 0, 0, 0, 0)
-        self.slot.send_event(0, NOTECMD.CLEAN_SYNTHS, 0, 0, 0, 0)
+        self.setup_sunvox_slot()
         self.slot.load(module.project)
         self.controllers_manager.root_group = module.c
 
