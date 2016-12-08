@@ -11,12 +11,12 @@ class IntegerParameterWidget(ParameterWidget):
     def setUp(self, ui):
         super().setUp(ui)
         self.spinbox = QSpinBox(self)
-        self.spinbox.setValue(self.value)
         self.spinbox.setSingleStep(self.parameter.step)
         if self.parameter.range is not None:
             min_, max_ = self.parameter.range
             self.spinbox.setMinimum(min_)
             self.spinbox.setMaximum(max_)
+        self.spinbox.setValue(self.value)
         self.spinbox.valueChanged.connect(self.on_spinbox_valueChanged)
         self.layout.addWidget(self.spinbox)
 
