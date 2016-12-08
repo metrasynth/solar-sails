@@ -6,9 +6,10 @@ from PyQt5.QtWidgets import QFrame, qApp
 from PyQt5.uic import loadUiType
 from qutepart import Qutepart
 from sails import midi
-from sails.ui import App
 from sf.mmck.kit import Kit
 from sf.mmck.project import Group
+
+from sails.ui.outputcatcher import OutputCatcher
 from sunvox.api import NOTECMD, Process, Slot
 
 from .project.manager import ControllersManager
@@ -46,6 +47,8 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
         self.layout_4.addWidget(self.stub4)
         self.layout_5.addWidget(self.stub5)
         # noinspection PyCallByClass
+        QTimer.singleShot(0, self.setup_parameter_splitter)
+        QTimer.singleShot(0, self.setup_project_splitter)
         QTimer.singleShot(0, self.parameter_editor.setFocus)
 
     def setup_controllers(self):
@@ -71,7 +74,10 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
         editor.textChanged.connect(self.on_parameter_editor_textChanged)
         editor.setPlainText(SAMPLE_PARAMETER_FACTORY)
         self.layout_1.addWidget(editor)
-        self.parameter_exception_browser.hide()
+
+    def setup_parameter_splitter(self):
+        splitter = self.parameter_splitter
+        splitter.setSizes([sum(splitter.sizes()) - 200, 200])
 
     def setup_parameters(self):
         self.parameters_manager = ParametersManager(
@@ -93,7 +99,10 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
         editor.textChanged.connect(self.on_project_editor_textChanged)
         editor.setPlainText(SAMPLE_PROJECT_FACTORY)
         self.layout_3.addWidget(editor)
-        self.project_exception_browser.hide()
+
+    def setup_project_splitter(self):
+        splitter = self.project_splitter
+        splitter.setSizes([sum(splitter.sizes()) - 200, 200])
 
     def setup_sunvox_process(self):
         self.sunvox = Process()
@@ -113,6 +122,7 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
         self.parameters_manager.parameters = self.kit.parameter_module.p
 
     def compile_project(self):
+        self.kit.parameter_values_dirty = True
         module = self.kit.project_module
         self.setup_sunvox_slot()
         self.slot.load(module.project)
@@ -143,30 +153,25 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
 
     @pyqtSlot()
     def on_action_compile_parameters_triggered(self):
-        b = self.parameter_exception_browser
-        # noinspection PyBroadException
-        try:
-            self.compile_parameters()
-        except Exception:
-            b.setPlainText(traceback.format_exc())
-            b.show()
-        else:
-            b.hide()
+        with OutputCatcher(self.parameter_output):
+            # noinspection PyBroadException
+            try:
+                self.compile_parameters()
+            except Exception:
+                print(traceback.format_exc())
         self.set_compile_actions_enabled()
         QTimer.singleShot(1, self.set_parameters_width)
 
     @pyqtSlot()
     def on_action_compile_project_triggered(self):
-        b = self.project_exception_browser
-        # noinspection PyBroadException
-        try:
-            self.compile_project()
-        except Exception:
-            b.setPlainText(traceback.format_exc())
-            b.show()
-        else:
-            b.hide()
-            self.kit.parameter_values_dirty = False
+        with OutputCatcher(self.project_output):
+            # noinspection PyBroadException
+            try:
+                self.compile_project()
+            except Exception:
+                print(traceback.format_exc())
+            else:
+                self.kit.parameter_values_dirty = False
         self.set_compile_actions_enabled()
         QTimer.singleShot(1, self.set_controllers_width)
 
