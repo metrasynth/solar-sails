@@ -1,7 +1,6 @@
 import sys
 
-from PyQt5.QtGui import QTextCursor
-from PyQt5.QtWidgets import QPlainTextEdit
+from PyQt5.QtWidgets import QPlainTextEdit, qApp
 
 
 class OutputCatcher(object):
@@ -33,7 +32,8 @@ class OutputWriter(object):
 
     def flush(self):
         self.file.flush()
+        qApp.processEvents()
 
     def write(self, s):
-        self.editor.insertPlainText(s)
         self.file.write(s)
+        self.editor.insertPlainText(s)
