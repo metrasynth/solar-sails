@@ -1,8 +1,10 @@
 import os
 
+from arrow import now
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.uic import loadUiType
+import rv.api as rv
 from sails.ui.mmck.mainmenubar import MmckMainMenuBar
 from sails.ui.mmck.mainwidget import MmckMainWidget
 from sails.ui.openers.mmckopener import MmckOpener
@@ -38,8 +40,20 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         for action in [
             self.action_save,
             self.action_save_as,
+            self.action_export_metamodule,
         ]:
             menubar.file_menu.insertAction(sep, action)
+
+    @pyqtSlot()
+    def on_action_export_metamodule_triggered(self):
+        path = self.windowFilePath()
+        if path:
+            mod = rv.m.MetaModule(project=self.main_widget.kit.project)
+            synth = rv.Synth(mod)
+            timestamp = now().strftime('%Y%m%d%H%M%S')
+            filename = '{}-{}.sunsynth'.format(path, timestamp)
+            with open(filename, 'wb') as f:
+                synth.write_to(f)
 
     @pyqtSlot()
     def on_action_save_triggered(self):
@@ -61,3 +75,4 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         if path:
             self.setWindowFilePath(path)
             self.on_action_save_triggered()
+

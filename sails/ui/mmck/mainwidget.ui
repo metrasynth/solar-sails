@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1008</width>
+    <width>1030</width>
     <height>553</height>
    </rect>
   </property>
@@ -77,12 +77,6 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>125</width>
-           <height>0</height>
-          </size>
          </property>
          <property name="styleSheet">
           <string notr="true">QLabel { font-weight: bold }</string>
@@ -203,12 +197,6 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="minimumSize">
-          <size>
-           <width>125</width>
-           <height>0</height>
-          </size>
-         </property>
          <property name="styleSheet">
           <string notr="true">QLabel { font-weight: bold }</string>
          </property>
@@ -239,7 +227,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>123</width>
+            <width>86</width>
             <height>499</height>
            </rect>
           </property>

@@ -11,6 +11,7 @@ sys.path.append(SETUP_DIR)
 import sails  # NOQA isort:skip
 
 dependencies = [
+    'arrow',
     'ipykernel',
     'ipython',
     'prompt-toolkit',

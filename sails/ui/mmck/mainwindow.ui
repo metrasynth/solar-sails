@@ -62,7 +62,7 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_save">
    <property name="text">
-    <string>Save</string>
+    <string>&amp;Save</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -70,10 +70,18 @@
   </action>
   <action name="action_save_as">
    <property name="text">
-    <string>Save As...</string>
+    <string>Save &amp;As...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="action_export_metamodule">
+   <property name="text">
+    <string>&amp;Export MetaModule</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
    </property>
   </action>
  </widget>
