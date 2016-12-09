@@ -113,6 +113,7 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
         if hasattr(self, 'slot'):
             self.slot.close()
         self.slot = Slot(process=self.sunvox)
+        self.slot.volume(256)
 
     def shutdown_sunvox_process(self):
         self.sunvox.deinit()
