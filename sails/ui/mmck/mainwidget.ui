@@ -284,7 +284,7 @@
     <string>Compile Parameters</string>
    </property>
    <property name="shortcut">
-    <string>Meta+Shift+P</string>
+    <string>F1</string>
    </property>
   </action>
   <action name="action_compile_project">
@@ -295,7 +295,7 @@
     <string>Compile Project</string>
    </property>
    <property name="shortcut">
-    <string>Meta+Shift+J</string>
+    <string>F2</string>
    </property>
   </action>
  </widget>
