@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1030</width>
-    <height>553</height>
+    <height>575</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -59,12 +59,18 @@
         </item>
        </layout>
       </widget>
-      <widget class="QTextBrowser" name="parameter_output">
+      <widget class="QPlainTextEdit" name="parameter_output">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="centerOnScroll">
+        <bool>false</bool>
        </property>
       </widget>
      </widget>
@@ -108,8 +114,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>123</width>
-            <height>499</height>
+            <width>91</width>
+            <height>521</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -138,7 +144,7 @@
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -185,6 +191,12 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="centerOnScroll">
+        <bool>false</bool>
+       </property>
       </widget>
      </widget>
      <widget class="QWidget" name="layoutWidget">
@@ -227,8 +239,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>86</width>
-            <height>499</height>
+            <width>90</width>
+            <height>521</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_9">
