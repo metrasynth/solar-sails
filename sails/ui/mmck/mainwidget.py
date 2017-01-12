@@ -1,14 +1,19 @@
 import os
 import traceback
+from collections import defaultdict
+from enum import Enum
 
 from PyQt5.QtCore import QTimer, pyqtSlot
 from PyQt5.QtWidgets import QFrame, qApp
 from PyQt5.uic import loadUiType
 from qutepart import Qutepart
+from rv.controller import Range
+
 from sails import midi
 from sf.mmck.kit import Kit
 from sf.mmck.project import Group
 
+from sails.midi.ccmappings import cc_mappings
 from sails.ui.outputcatcher import OutputCatcher
 from sunvox.api import NOTECMD, Process, Slot
 
@@ -30,6 +35,8 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
     def __init__(self, parent=None):
         super(MmckMainWidget, self).__init__(parent)
         self._active_playback_notes = 0
+        self.controller_aliases = defaultdict(set)
+        self.alias_controllers = defaultdict(set)
         self.kit = Kit()
         self.setupUi(self)
 
@@ -57,6 +64,8 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
             layout=self.layout_4,
             root_group=EMPTY_GROUP,
         )
+        self.controllers_manager.mapping_changed.connect(
+            self.on_controllers_manager_mapping_changed)
         self.controllers_manager.value_changed.connect(
             self.on_controllers_manager_value_changed)
 
@@ -119,6 +128,10 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
         self.sunvox.deinit()
         self.sunvox.kill()
 
+    def auto_map_controllers(self):
+        for alias, (name, w) in zip(cc_mappings.options[1:], self.controllers_manager.controller_widgets.items()):
+            w.set_cc_alias(alias)
+
     def compile_parameters(self):
         self.parameters_manager.parameters = self.kit.parameter_module.p
 
@@ -169,12 +182,24 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
             # noinspection PyBroadException
             try:
                 self.compile_project()
+                self.auto_map_controllers()
             except Exception:
                 print(traceback.format_exc())
             else:
                 self.kit.parameter_values_dirty = False
         self.set_compile_actions_enabled()
         QTimer.singleShot(1, self.set_controllers_width)
+
+    @pyqtSlot(str, str)
+    def on_controllers_manager_mapping_changed(self, alias, name):
+        # first remove existing controller/alias mappings
+        for a in list(self.controller_aliases[name]):
+            if name in self.alias_controllers[a]:
+                self.alias_controllers[a].remove(name)
+            if a in self.controller_aliases[name]:
+                self.controller_aliases[name].remove(a)
+        self.alias_controllers[alias].add(name)
+        self.controller_aliases[name].add(alias)
 
     @pyqtSlot(int, str)
     def on_controllers_manager_value_changed(self, value, name):
@@ -186,8 +211,11 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
 
     @pyqtSlot(str, 'PyQt_PyObject')
     def on_midi_listener_message_received(self, port_name, message):
+        if message.type != 'clock':
+            print(message.type, message)
         note_on = message.type == 'note_on'
         note_off = message.type == 'note_off'
+        cc = message.type == 'control_change'
         if note_on and message.velocity > 0:
             note = message.note - 24 + 1
             self.slot.send_event(0, note, message.velocity, 2, 0, 0)
@@ -197,6 +225,24 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
             self._active_playback_notes = max(self._active_playback_notes, 0)
             if self._active_playback_notes == 0:
                 self.slot.send_event(0, NOTECMD.NOTE_OFF, 0, 0, 0, 0)
+        elif cc:
+            for alias in cc_mappings.cc_aliases[message.control]:
+                for name in self.alias_controllers[alias]:
+                    # map message.value to controller range
+                    c = self.kit.project_module.c[name]
+                    ctl = c.ctl
+                    value_type = ctl.value_type
+                    if isinstance(value_type, Range):
+                        min_value, max_value = value_type.min, value_type.max
+                    elif isinstance(value_type, type) and issubclass(value_type, Enum):
+                        min_value, max_value = 0, len(value_type)
+                    elif value_type is bool:
+                        min_value, max_value = 0, 1
+                    range = max_value - min_value
+                    factor = range / 127.0
+                    value = int(message.value * factor)
+                    value += min_value
+                    self.controllers_manager.set_ctl_value(name, value)
 
     @pyqtSlot()
     def on_parameter_editor_debouncer_timeout(self):

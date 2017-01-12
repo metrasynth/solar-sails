@@ -36,3 +36,8 @@ class RangeWidget(RangeWidgetBase, Ui_RangeWidget):
     @pyqtSlot(int)
     def on_spinbox_valueChanged(self, value):
         self.value_changed.emit(value)
+
+    def set_ctl_value(self, value):
+        self.spinbox.setValue(value)
+        self.slider.setValue(value)
+        self.value_changed.emit(value)

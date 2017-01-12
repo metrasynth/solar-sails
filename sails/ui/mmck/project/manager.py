@@ -1,22 +1,32 @@
+from collections import OrderedDict
 from enum import Enum
 
 from PyQt5.QtCore import QObject, pyqtSignal
-from PyQt5.QtWidgets import QGroupBox, QLabel, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QComboBox
+from PyQt5.QtWidgets import QGroupBox, QLabel, QVBoxLayout, QWidget, QHBoxLayout
 from rv.controller import Range
 from sf.mmck.project import Controller, Group
 
+from sails.midi.ccmappings import cc_mappings
 from .enum import EnumWidget
 from .range import RangeWidget
 
 
+class BoolEnum(Enum):
+    on = False
+    off = True
+
+
 class ControllersManager(QObject):
 
+    mapping_changed = pyqtSignal(str, str)  # alias, name
     value_changed = pyqtSignal(int, str)  # value, name
 
     def __init__(self, parent, layout, root_group):
         super().__init__(parent)
         self._root_group = None
-        self.widgets = {}
+        self.widgets = OrderedDict()
+        self.controller_widgets = OrderedDict()
         self.root_layout = layout
         self.root_group = root_group
 
@@ -30,6 +40,9 @@ class ControllersManager(QObject):
             self.clear_widgets()
             self._root_group = value
             self.create_widgets()
+
+    def set_ctl_value(self, name, value):
+        self.widgets[name].set_ctl_value(value)
 
     def clear_widgets(self):
         for w in self.widgets.values():
@@ -58,6 +71,8 @@ class ControllersManager(QObject):
                 )
                 layout.addWidget(widget)
                 self.widgets[key] = widget
+                self.controller_widgets[key] = widget
+                widget.mapping_changed.connect(self.mapping_changed)
                 widget.value_changed.connect(self.value_changed)
             elif isinstance(value, Group):
                 subprefix = name + '.'
@@ -80,6 +95,7 @@ class ControllersManager(QObject):
 
 class ControllerWidget(QWidget):
 
+    mapping_changed = pyqtSignal(str, str)  # alias, name
     value_changed = pyqtSignal(int, str)  # value, name
 
     def __init__(self, parent, name, controller):
@@ -88,7 +104,11 @@ class ControllerWidget(QWidget):
         module = controller.module
         ctl = controller.ctl
         value = controller.value
+        self.cc_combo = None
         t = ctl.value_type
+        if t is bool:
+            t = BoolEnum
+            value = BoolEnum(value)
         if isinstance(t, Range):
             widget_class = RangeWidget
         elif isinstance(t, type) and issubclass(t, Enum):
@@ -96,18 +116,38 @@ class ControllerWidget(QWidget):
         else:
             widget_class = None
         if widget_class:
-            layout = QVBoxLayout(self)
-            layout.setContentsMargins(0, 0, 0, 0)
-            layout.setSpacing(5)
-            self.setLayout(layout)
+            vlayout = QVBoxLayout(self)
+            vlayout.setContentsMargins(0, 0, 0, 0)
+            vlayout.setSpacing(5)
+            self.setLayout(vlayout)
+            hlayout = QHBoxLayout()
+            hlayout.setContentsMargins(0, 0, 0, 0)
+            hlayout.setSpacing(5)
             label = QLabel(name.split('.')[-1], self)
-            w = widget_class(parent=self, value_type=t, initial_value=value)
-            layout.addWidget(label)
-            layout.addWidget(w)
+            cc_combo = self.cc_combo = QComboBox(self)
+            cc_combo.addItems(cc_mappings.options)
+            cc_combo.setEditable(True)
+            self.managed_widget = w = widget_class(parent=self, value_type=t, initial_value=value)
+            hlayout.addWidget(label)
+            hlayout.addWidget(cc_combo)
+            vlayout.addItem(hlayout)
+            vlayout.addWidget(w)
+            cc_combo.currentTextChanged.connect(self.on_cc_combo_currentTextChanged)
             w.value_changed.connect(self.on_child_value_changed)
+
+    def on_cc_combo_currentTextChanged(self, text):
+        self.mapping_changed.emit(text, self.name)
 
     def on_child_value_changed(self, value):
         self.value_changed.emit(value, self.name)
+
+    def set_cc_alias(self, alias):
+        if self.cc_combo:
+            self.cc_combo.setCurrentText(alias)
+            self.mapping_changed.emit(alias, self.name)
+
+    def set_ctl_value(self, value):
+        self.managed_widget.set_ctl_value(value)
 
 
 class GroupWidget(QGroupBox):

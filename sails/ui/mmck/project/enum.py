@@ -8,6 +8,7 @@ class EnumWidget(QComboBox):
 
     def __init__(self, parent, value_type, initial_value):
         super().__init__(parent)
+        self.value_type = value_type
         self.index_values = {}
         self.value_indexes = {}
         for index, option in enumerate(value_type):
@@ -21,3 +22,10 @@ class EnumWidget(QComboBox):
     def on_currentIndexChanged(self, index):
         value = self.index_values[index]
         self.value_changed.emit(value)
+
+    def set_ctl_value(self, value):
+        for index, option in enumerate(self.value_type):
+            if option.value == value:
+                self.setCurrentIndex(index)
+                self.value_changed.emit(value)
+                return

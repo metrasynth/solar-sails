@@ -21,6 +21,7 @@ class MidiSettingsWidget(MidiSettingsWidgetBase, Ui_MidiSettingsWidget):
 
     def setupUi(self, ui):
         super().setupUi(ui)
+        self.load_cc_mappings_text()
 
     def setup_model(self):
         self.midi_in_model = QStringListModel()
@@ -52,6 +53,14 @@ class MidiSettingsWidget(MidiSettingsWidgetBase, Ui_MidiSettingsWidget):
     def midi_in_unselected(self):
         return set(self.midi_in_model.stringList()) - self.midi_in_selected
 
+    def load_cc_mappings_text(self):
+        App.settings.beginGroup('midi')
+        try:
+            cc_mappings = App.settings.value('cc_mappings')
+            self.cc_mappings_textedit.setPlainText(cc_mappings)
+        finally:
+            App.settings.endGroup()
+
     def load_midi_in_selection(self):
         App.settings.beginGroup('midi')
         try:
@@ -80,3 +89,12 @@ class MidiSettingsWidget(MidiSettingsWidgetBase, Ui_MidiSettingsWidget):
     @pyqtSlot()
     def on_midi_in_selection_changed(self):
         self.save_midi_in_seletion()
+
+    @pyqtSlot()
+    def on_cc_mappings_textedit_textChanged(self):
+        App.settings.beginGroup('midi')
+        try:
+            cc_mappings = self.cc_mappings_textedit.toPlainText()
+            App.settings.setValue('cc_mappings', cc_mappings)
+        finally:
+            App.settings.endGroup()

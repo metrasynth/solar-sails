@@ -19,8 +19,7 @@ class MidiListener(QObject):
     def start_port_listener(self, port_name, virtual=False):
         available = mido.backend.get_input_names()
         if (port_name not in self.port_listeners
-            and (virtual or port_name in available)
-            ):
+                and (virtual or port_name in available)):
             def listener(message):
                 self.message_received.emit(port_name, message)
             port = mido.backend.open_input(
