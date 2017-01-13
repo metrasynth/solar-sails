@@ -36,10 +36,9 @@ class ControllersManager(QObject):
 
     @root_group.setter
     def root_group(self, value):
-        if value is not self._root_group:
-            self.clear_widgets()
-            self._root_group = value
-            self.create_widgets()
+        self.clear_widgets()
+        self._root_group = value
+        self.create_widgets()
 
     def set_ctl_value(self, name, value):
         self.widgets[name].set_ctl_value(value)
@@ -50,7 +49,8 @@ class ControllersManager(QObject):
             w.deleteLater()
         while self.root_layout.takeAt(0):
             continue
-        self.widgets = {}
+        self.widgets = OrderedDict()
+        self.controller_widgets = OrderedDict()
 
     def create_widgets(self, prefix='', group=None, group_widget=None,
                        layout=None):
@@ -101,8 +101,8 @@ class ControllerWidget(QWidget):
     def __init__(self, parent, name, controller):
         super().__init__(parent)
         self.name = name
-        module = controller.module
-        ctl = controller.ctl
+        module = self.module = controller.module
+        ctl = self.ctl = controller.ctl
         value = controller.value
         self.cc_combo = None
         t = ctl.value_type
