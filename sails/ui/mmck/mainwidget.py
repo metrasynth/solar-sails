@@ -7,7 +7,7 @@ from PyQt5.QtCore import QTimer, pyqtSlot
 from PyQt5.QtWidgets import QFrame, qApp
 from PyQt5.uic import loadUiType
 from qutepart import Qutepart
-from rv.controller import Range
+from rv.controller import Range, MidiMessageType
 
 from sails import midi
 from sf.mmck.kit import Kit
@@ -35,8 +35,7 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
     def __init__(self, parent=None):
         super(MmckMainWidget, self).__init__(parent)
         self._active_playback_notes = 0
-        self.controller_aliases = defaultdict(set)
-        self.alias_controllers = defaultdict(set)
+        self.clear_midi_mapping()
         self.kit = Kit()
         self.setupUi(self)
 
@@ -128,14 +127,28 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
         self.sunvox.deinit()
         self.sunvox.kill()
 
+    def clear_midi_mapping(self):
+        self.controller_aliases = defaultdict(set)
+        self.alias_controllers = defaultdict(set)
+
     def auto_map_controllers(self):
         for alias, (name, w) in zip(cc_mappings.options[1:], self.controllers_manager.controller_widgets.items()):
-            w.set_cc_alias(alias)
+            try:
+                w.set_cc_alias(alias)
+            except (SystemError, RuntimeError):
+                continue
+            ctl = w.ctl
+            ccs = cc_mappings.alias_ccs[alias]
+            if ccs:
+                cc = list(sorted(ccs))[0]
+                ctl.midi_message_type = MidiMessageType.control_change
+                ctl.midi_message_parameter = cc
 
     def compile_parameters(self):
         self.parameters_manager.parameters = self.kit.parameter_module.p
 
     def compile_project(self):
+        self.clear_midi_mapping()
         self.kit.parameter_values_dirty = True
         module = self.kit.project_module
         self.setup_sunvox_slot()
@@ -211,8 +224,6 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
 
     @pyqtSlot(str, 'PyQt_PyObject')
     def on_midi_listener_message_received(self, port_name, message):
-        if message.type != 'clock':
-            print(message.type, message)
         note_on = message.type == 'note_on'
         note_off = message.type == 'note_off'
         cc = message.type == 'control_change'
