@@ -84,6 +84,17 @@
     <string>Ctrl+E</string>
    </property>
   </action>
+  <action name="action_export_project">
+   <property name="text">
+    <string>&amp;Export Project</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Project</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+E</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

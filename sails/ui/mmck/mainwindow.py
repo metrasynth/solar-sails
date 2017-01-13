@@ -41,6 +41,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
             self.action_save,
             self.action_save_as,
             self.action_export_metamodule,
+            self.action_export_project,
         ]:
             menubar.file_menu.insertAction(sep, action)
 
@@ -54,6 +55,16 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
             filename = '{}-{}.sunsynth'.format(path, timestamp)
             with open(filename, 'wb') as f:
                 synth.write_to(f)
+
+    @pyqtSlot()
+    def on_action_export_project_triggered(self):
+        path = self.windowFilePath()
+        if path:
+            project = self.main_widget.kit.project
+            timestamp = now().strftime('%Y%m%d%H%M%S')
+            filename = '{}-{}.sunvox'.format(path, timestamp)
+            with open(filename, 'wb') as f:
+                project.write_to(f)
 
     @pyqtSlot()
     def on_action_save_triggered(self):
