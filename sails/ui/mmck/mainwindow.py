@@ -49,10 +49,12 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
     def on_action_export_metamodule_triggered(self):
         path = self.windowFilePath()
         if path:
-            mod = rv.m.MetaModule(project=self.main_widget.kit.project)
+            project = self.main_widget.kit.project
+            mod = rv.m.MetaModule(project=project)
             synth = rv.Synth(mod)
+            slug = project.name.lower().replace(' ', '-')
             timestamp = now().strftime('%Y%m%d%H%M%S')
-            filename = '{}-{}.sunsynth'.format(path, timestamp)
+            filename = '{}-{}-{}.sunsynth'.format(path, slug, timestamp)
             with open(filename, 'wb') as f:
                 synth.write_to(f)
 
@@ -61,8 +63,9 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         path = self.windowFilePath()
         if path:
             project = self.main_widget.kit.project
+            slug = project.name.lower().replace(' ', '-')
             timestamp = now().strftime('%Y%m%d%H%M%S')
-            filename = '{}-{}.sunvox'.format(path, timestamp)
+            filename = '{}-{}-{}.sunvox'.format(path, slug, timestamp)
             with open(filename, 'wb') as f:
                 project.write_to(f)
 
