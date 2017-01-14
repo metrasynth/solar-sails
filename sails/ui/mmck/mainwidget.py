@@ -7,7 +7,8 @@ from PyQt5.QtCore import QTimer, pyqtSlot
 from PyQt5.QtWidgets import QFrame, qApp
 from PyQt5.uic import loadUiType
 from qutepart import Qutepart
-from rv.controller import Range, MidiMessageType
+from rv.cmidmap import MidiMessageType
+from rv.controller import Range
 
 from sails import midi
 from sf.mmck.kit import Kit
@@ -137,12 +138,14 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
                 w.set_cc_alias(alias)
             except (SystemError, RuntimeError):
                 continue
+            mod = w.module
             ctl = w.ctl
             ccs = cc_mappings.alias_ccs[alias]
             if ccs:
                 cc = list(sorted(ccs))[0]
-                ctl.midi_message_type = MidiMessageType.control_change
-                ctl.midi_message_parameter = cc
+                midmap = mod.controller_midi_maps[ctl.name]
+                midmap.message_type = MidiMessageType.control_change
+                midmap.message_parameter = cc
 
     def compile_parameters(self):
         self.parameters_manager.parameters = self.kit.parameter_module.p
