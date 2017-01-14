@@ -5,6 +5,7 @@ from enum import Enum
 
 from PyQt5.QtCore import QTimer, pyqtSlot
 from PyQt5.QtWidgets import QFrame, qApp
+from PyQt5.QtWidgets import QLabel
 from PyQt5.uic import loadUiType
 from qutepart import Qutepart
 from rv.cmidmap import MidiMessageType
@@ -37,6 +38,7 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
         super(MmckMainWidget, self).__init__(parent)
         self._active_playback_notes = 0
         self.clear_midi_mapping()
+        self.clear_udc_list()
         self.kit = Kit()
         self.setupUi(self)
 
@@ -68,6 +70,8 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
             self.on_controllers_manager_mapping_changed)
         self.controllers_manager.value_changed.connect(
             self.on_controllers_manager_value_changed)
+        self.controllers_manager.udc_changed.connect(
+            self.on_controllers_manager_udc_changed)
 
     def setup_midi_routing(self):
         midi.listener.message_received.connect(
@@ -132,6 +136,17 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
         self.controller_aliases = defaultdict(set)
         self.alias_controllers = defaultdict(set)
 
+    def clear_udc_list(self):
+        self.udc_list = []
+
+    def clear_udc_widgets(self):
+        while self.layout_5.count() > 0:
+            child = self.layout_5.takeAt(0)
+            w = child.widget()
+            if w:
+                w.close()
+                w.deleteLater()
+
     def auto_map_controllers(self):
         for alias, (name, w) in zip(cc_mappings.options[1:], self.controllers_manager.controller_widgets.items()):
             try:
@@ -152,6 +167,8 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
 
     def compile_project(self):
         self.clear_midi_mapping()
+        self.clear_udc_list()
+        self.clear_udc_widgets()
         self.kit.parameter_values_dirty = True
         module = self.kit.project_module
         self.setup_sunvox_slot()
@@ -180,6 +197,13 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
 
     def set_project_source(self):
         self.kit.project_factory_source = self.project_editor.text
+
+    def update_udc_widgets(self):
+        self.clear_udc_widgets()
+        for i, name in enumerate(self.udc_list, 1):
+            label = QLabel('{}: {}'.format(i, name), self)
+            self.layout_5.addWidget(label)
+        self.layout_5.addStretch(1)
 
     @pyqtSlot()
     def on_action_compile_parameters_triggered(self):
@@ -224,6 +248,14 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
         ctl = controller.ctl.number
         pvalue = controller.ctl.pattern_value(value)
         self.slot.send_event(0, 0, 0, mod, ctl << 8, pvalue)
+
+    @pyqtSlot(bool, str)
+    def on_controllers_manager_udc_changed(self, state, name):
+        if state and name not in self.udc_list:
+            self.udc_list.append(name)
+        elif not state and name in self.udc_list:
+            self.udc_list.remove(name)
+        self.update_udc_widgets()
 
     @pyqtSlot(str, 'PyQt_PyObject')
     def on_midi_listener_message_received(self, port_name, message):
@@ -295,6 +327,9 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
         self.kit.load_json(data)
         self.parameters_manager.clear_widgets()
         self.controllers_manager.clear_widgets()
+        self.clear_midi_mapping()
+        self.clear_udc_list()
+        self.clear_udc_widgets()
         self.parameter_editor.setPlainText(self.kit.parameter_factory_source)
         self.project_editor.setPlainText(self.kit.project_factory_source)
 

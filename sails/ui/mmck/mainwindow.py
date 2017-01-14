@@ -50,8 +50,17 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         path = self.windowFilePath()
         if path:
             project = self.main_widget.kit.project
-            mod = rv.m.MetaModule(project=project)
-            synth = rv.Synth(mod)
+            metamod = rv.m.MetaModule(project=project)
+            udc_list = self.main_widget.udc_list
+            metamod.user_defined_controllers = min(27, len(udc_list))
+            for i, name in zip(range(0, 27), udc_list):
+                grpname, ctlname = name.split('.')
+                ctl = self.main_widget.kit.project_module.c[grpname][ctlname]
+                mapping = metamod.mappings.values[i]
+                mapping.module = ctl.module.index
+                mapping.controller = ctl.ctl.number
+                metamod.user_defined[i].label = name
+            synth = rv.Synth(metamod)
             slug = project.name.lower().replace(' ', '-')
             timestamp = now().strftime('%Y%m%d%H%M%S')
             filename = '{}-{}-{}.sunsynth'.format(path, slug, timestamp)
@@ -89,4 +98,3 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         if path:
             self.setWindowFilePath(path)
             self.on_action_save_triggered()
-

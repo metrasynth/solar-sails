@@ -2,6 +2,7 @@ from collections import OrderedDict
 from enum import Enum
 
 from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QComboBox
 from PyQt5.QtWidgets import QGroupBox, QLabel, QVBoxLayout, QWidget, QHBoxLayout
 from rv.controller import Range
@@ -21,6 +22,7 @@ class ControllersManager(QObject):
 
     mapping_changed = pyqtSignal(str, str)  # alias, name
     value_changed = pyqtSignal(int, str)  # value, name
+    udc_changed = pyqtSignal(bool, str)  # checked, name
 
     def __init__(self, parent, layout, root_group):
         super().__init__(parent)
@@ -74,6 +76,7 @@ class ControllersManager(QObject):
                 self.controller_widgets[key] = widget
                 widget.mapping_changed.connect(self.mapping_changed)
                 widget.value_changed.connect(self.value_changed)
+                widget.udc_changed.connect(self.udc_changed)
             elif isinstance(value, Group):
                 subprefix = name + '.'
                 groupbox = GroupWidget(
@@ -97,6 +100,7 @@ class ControllerWidget(QWidget):
 
     mapping_changed = pyqtSignal(str, str)  # alias, name
     value_changed = pyqtSignal(int, str)  # value, name
+    udc_changed = pyqtSignal(bool, str)  # checked, name
 
     def __init__(self, parent, name, controller):
         super().__init__(parent)
@@ -123,20 +127,27 @@ class ControllerWidget(QWidget):
             hlayout = QHBoxLayout()
             hlayout.setContentsMargins(0, 0, 0, 0)
             hlayout.setSpacing(5)
+            udc_checkbox = self.udc_checkbox = QCheckBox(self)
             label = QLabel(name.split('.')[-1], self)
             cc_combo = self.cc_combo = QComboBox(self)
             cc_combo.addItems(cc_mappings.options)
             cc_combo.setEditable(True)
             self.managed_widget = w = widget_class(parent=self, value_type=t, initial_value=value)
-            hlayout.addWidget(label)
+            hlayout.addWidget(udc_checkbox)
+            hlayout.addSpacing(5)
+            hlayout.addWidget(label, 1)
             hlayout.addWidget(cc_combo)
             vlayout.addItem(hlayout)
             vlayout.addWidget(w)
+            udc_checkbox.stateChanged.connect(self.on_udc_checkbox_stateChanged)
             cc_combo.currentTextChanged.connect(self.on_cc_combo_currentTextChanged)
             w.value_changed.connect(self.on_child_value_changed)
 
     def on_cc_combo_currentTextChanged(self, text):
         self.mapping_changed.emit(text, self.name)
+
+    def on_udc_checkbox_stateChanged(self, state):
+        self.udc_changed.emit(bool(state), self.name)
 
     def on_child_value_changed(self, value):
         self.value_changed.emit(value, self.name)
