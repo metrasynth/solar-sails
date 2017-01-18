@@ -263,7 +263,7 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
         note_off = message.type == 'note_off'
         cc = message.type == 'control_change'
         if note_on and message.velocity > 0:
-            note = message.note - 24 + 1
+            note = message.note - 12 + 1
             self.slot.send_event(0, note, message.velocity, 2, 0, 0)
             self._active_playback_notes += 1
         elif note_off or (note_on and message.velocity == 0):
