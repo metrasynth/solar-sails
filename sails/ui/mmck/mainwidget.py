@@ -275,6 +275,8 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
             for alias in cc_mappings.cc_aliases[message.control]:
                 for name in self.alias_controllers[alias]:
                     # map message.value to controller range
+                    if name not in self.kit.project_module.c:
+                        continue
                     c = self.kit.project_module.c[name]
                     ctl = c.ctl
                     value_type = ctl.value_type
