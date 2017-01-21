@@ -1,4 +1,5 @@
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QLabel
 
 
@@ -26,6 +27,13 @@ class ParametersManager(QObject):
         self.parameter_widgets = {}
         self.parameters = parameters
         self.values = values
+        self.setup_debouncer()
+
+    def setup_debouncer(self):
+        self.debouncer = QTimer(self)
+        self.debouncer.timeout.connect(self.on_debouncer_timeout)
+        self.debouncer.setInterval(500)
+        self.debouncer.setSingleShot(True)
 
     @property
     def parameters(self):
@@ -59,7 +67,11 @@ class ParametersManager(QObject):
             self.parameter_widgets[name] = widget
         self.layout.addStretch(1)
 
+    @pyqtSlot()
+    def on_debouncer_timeout(self):
+        self.valuesChanged.emit()
+
     @pyqtSlot('PyQt_PyObject', str)
     def on_parameter_widget_valueChanged(self, value, name):
         self.values[name] = value
-        self.valuesChanged.emit()
+        self.debouncer.start()

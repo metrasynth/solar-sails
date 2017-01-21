@@ -6,7 +6,7 @@ from .opener import Opener
 @Opener.register_opener
 class MmckOpener(Opener):
 
-    file_ext = '.mmck'
+    file_ext = '.mmck.py'
     file_type_label = 'MetaModule Construction Kit'
 
     @classmethod
@@ -17,7 +17,5 @@ class MmckOpener(Opener):
         mmck = qApp._tools_mmck
         mmck.show()
         mmck.setFocus(True)
-        with open(filename, 'r') as f:
-            data = f.read()
-        mmck.main_widget.load_json(data)
+        mmck.load_file(filename)
         return mmck

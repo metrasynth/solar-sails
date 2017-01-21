@@ -35,12 +35,11 @@ class Opener(object):
 
     @classmethod
     def open_file(cls, filename):
-        _, ext = os.path.splitext(filename)
-        opener_class = cls._opener_classes.get(ext)
-        if opener_class:
-            return opener_class.new_or_existing_window(filename)
-        else:
-            logging.warning('%r files not supported', ext)
+        filename = os.path.abspath(filename)
+        for ext, opener_class in sorted(cls._opener_classes.items()):
+            if filename.endswith(ext):
+                return opener_class.new_or_existing_window(filename)
+        logging.warning('%r files not supported', os.path.splitext(filename)[1])
 
     @classmethod
     def register_opener(cls, subclass):
