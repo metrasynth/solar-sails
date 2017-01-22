@@ -13,6 +13,12 @@
   <property name="windowTitle">
    <string>MetaModule Construction Kit</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QLabel, QComboBox, QSpinBox, QPlainTextEdit {
+	font-size: 10pt;
+}
+</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <property name="leftMargin">
@@ -29,6 +35,9 @@
     </property>
     <item>
      <widget class="QScrollArea" name="controllers_scrollarea">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
       </property>
