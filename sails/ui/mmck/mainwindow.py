@@ -323,7 +323,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
                         bundle >> mods
                         mapping.module = bundle.index
                         mapping.controller = 1
-                        metamod.user_defined[i].label = ','.join(names)
+                        metamod.user_defined[i].label = ','.join(sorted(names))
                 synth = rv.Synth(metamod)
                 slug = project.name.lower().replace(' ', '-')
                 timestamp = now().strftime('%Y%m%d%H%M%S')
