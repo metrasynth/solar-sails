@@ -20,9 +20,9 @@ class BoolEnum(Enum):
 
 class ControllersManager(QObject):
 
-    mapping_changed = pyqtSignal(str, str)  # alias, name
-    value_changed = pyqtSignal(int, str)  # value, name
-    udc_changed = pyqtSignal(bool, str)  # checked, name
+    mappingChanged = pyqtSignal(str, str)  # alias, name
+    valueChanged = pyqtSignal(int, str)  # value, name
+    udcChanged = pyqtSignal(int, str)  # position, name
 
     def __init__(self, parent, layout, root_group):
         super().__init__(parent)
@@ -74,9 +74,9 @@ class ControllersManager(QObject):
                 layout.addWidget(widget)
                 self.widgets[key] = widget
                 self.controller_widgets[key] = widget
-                widget.mapping_changed.connect(self.mapping_changed)
-                widget.value_changed.connect(self.value_changed)
-                widget.udc_changed.connect(self.udc_changed)
+                widget.mappingChanged.connect(self.mappingChanged)
+                widget.valueChanged.connect(self.valueChanged)
+                widget.udcChanged.connect(self.udcChanged)
             elif isinstance(value, Group):
                 subprefix = name + '.'
                 groupbox = GroupWidget(
@@ -98,9 +98,9 @@ class ControllersManager(QObject):
 
 class ControllerWidget(QWidget):
 
-    mapping_changed = pyqtSignal(str, str)  # alias, name
-    value_changed = pyqtSignal(int, str)  # value, name
-    udc_changed = pyqtSignal(bool, str)  # checked, name
+    mappingChanged = pyqtSignal(str, str)  # alias, name
+    valueChanged = pyqtSignal(int, str)  # value, name
+    udcChanged = pyqtSignal(int, str)  # position, name
 
     def __init__(self, parent, name, controller):
         super().__init__(parent)
@@ -108,7 +108,7 @@ class ControllerWidget(QWidget):
         module = self.module = controller.module
         ctl = self.ctl = controller.ctl
         value = controller.value
-        self.cc_combo = None
+        self.cc_combobox = None
         t = ctl.value_type
         if t is bool:
             t = BoolEnum
@@ -127,35 +127,35 @@ class ControllerWidget(QWidget):
             hlayout = QHBoxLayout()
             hlayout.setContentsMargins(0, 0, 0, 0)
             hlayout.setSpacing(5)
-            udc_checkbox = self.udc_checkbox = QCheckBox(self)
+            udc_combobox = self.udc_combobox = UdcComboBox(self)
             label = QLabel(name.split('.')[-1], self)
-            cc_combo = self.cc_combo = QComboBox(self)
-            cc_combo.addItems(cc_mappings.options)
-            cc_combo.setEditable(True)
+            cc_combobox = self.cc_combobox = QComboBox(self)
+            cc_combobox.addItems(cc_mappings.options)
+            cc_combobox.setEditable(True)
             self.managed_widget = w = widget_class(parent=self, value_type=t, initial_value=value)
-            hlayout.addWidget(udc_checkbox)
+            hlayout.addWidget(udc_combobox)
             hlayout.addSpacing(5)
             hlayout.addWidget(label, 1)
-            hlayout.addWidget(cc_combo)
+            hlayout.addWidget(cc_combobox)
             vlayout.addItem(hlayout)
             vlayout.addWidget(w)
-            udc_checkbox.stateChanged.connect(self.on_udc_checkbox_stateChanged)
-            cc_combo.currentTextChanged.connect(self.on_cc_combo_currentTextChanged)
-            w.value_changed.connect(self.on_child_value_changed)
+            udc_combobox.currentTextChanged.connect(self.on_udc_combobox_currentTextChanged)
+            cc_combobox.currentTextChanged.connect(self.on_cc_combobox_currentTextChanged)
+            w.value_changed.connect(self.on_child_valueChanged)
 
-    def on_cc_combo_currentTextChanged(self, text):
-        self.mapping_changed.emit(text, self.name)
+    def on_cc_combobox_currentTextChanged(self, text):
+        self.mappingChanged.emit(text, self.name)
 
-    def on_udc_checkbox_stateChanged(self, state):
-        self.udc_changed.emit(bool(state), self.name)
+    def on_udc_combobox_currentTextChanged(self, text):
+        self.udcChanged.emit(None if text == '' else int(text), self.name)
 
-    def on_child_value_changed(self, value):
-        self.value_changed.emit(value, self.name)
+    def on_child_valueChanged(self, value):
+        self.valueChanged.emit(value, self.name)
 
     def set_cc_alias(self, alias):
-        if self.cc_combo:
-            self.cc_combo.setCurrentText(alias)
-            self.mapping_changed.emit(alias, self.name)
+        if self.cc_combobox:
+            self.cc_combobox.setCurrentText(alias)
+            self.mappingChanged.emit(alias, self.name)
 
     def set_ctl_value(self, value):
         self.managed_widget.set_ctl_value(value)
@@ -167,3 +167,11 @@ class GroupWidget(QGroupBox):
         super().__init__(parent)
         self.setTitle(name.split('.')[-1])
         self.setLayout(QVBoxLayout(self))
+
+
+class UdcComboBox(QComboBox):
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.addItem('')
+        self.addItems(list(map(str, range(1, 28))))

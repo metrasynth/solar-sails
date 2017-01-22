@@ -38,7 +38,7 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
         super(MmckMainWidget, self).__init__(parent)
         self._active_playback_notes = 0
         self.clear_midi_mapping()
-        self.clear_udc_list()
+        self.clear_udc_assignments()
         self.kit = Kit()
         self.setupUi(self)
 
@@ -73,7 +73,7 @@ class MmckMainWidget(MmckMainWidgetBase, Ui_MmckMainWidget):
 
     def update_udc_widgets(self):
         self.clear_udc_widgets()
-        for i, name in enumerate(self.udc_list, 1):
+        for i, name in enumerate(self.udc_assignments, 1):
             label = QLabel('{}: {}'.format(i, name), self)
             self.layout_5.addWidget(label)
         self.layout_5.addStretch(1)
