@@ -65,13 +65,18 @@ class ControllersManager(QObject):
             layout = group_widget.layout()
         for name, value in group.items():
             key = prefix + name
+            if layout is self.root_layout:
+                wlayout = QVBoxLayout()
+                layout.addLayout(wlayout)
+            else:
+                wlayout = layout
             if isinstance(value, Controller):
                 widget = ControllerWidget(
                     parent=group_widget,
                     name=key,
                     controller=value,
                 )
-                layout.addWidget(widget)
+                wlayout.addWidget(widget)
                 self.widgets[key] = widget
                 self.controller_widgets[key] = widget
                 widget.mappingChanged.connect(self.mappingChanged)
@@ -84,14 +89,16 @@ class ControllersManager(QObject):
                     name=key,
                     group=value,
                 )
-                layout.addWidget(groupbox)
+                wlayout.addWidget(groupbox)
                 self.widgets[key] = groupbox
                 self.create_widgets(
                     prefix=subprefix,
                     group=value,
                     group_widget=groupbox,
-                    layout=layout,
+                    layout=wlayout,
                 )
+            if layout is self.root_layout:
+                wlayout.addStretch(1)
         if layout is self.root_layout:
             layout.addStretch(1)
 
