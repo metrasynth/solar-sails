@@ -1,17 +1,16 @@
 import os
 import traceback
 from collections import defaultdict
-from enum import Enum
 from time import strftime
 
 import io
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QFileDialog
 from PyQt5.uic import loadUiType
 
 from arrow import now
 import rv.api as rv
 from rv.cmidmap import MidiMessageType
+from rv.note import NOTECMD
 from sails.midi.ccmappings import cc_mappings
 from sails.ui import App
 from sails.ui.mmck.ccmapper import CCMapper
@@ -25,7 +24,6 @@ from sf.mmck.kit import Kit
 from sails.ui.mainmenubar import MainMenuBar
 from sails.ui.mmck.parameters.manager import ParametersManager
 from sails.ui.mmck.controllers.manager import ControllersManager, Group
-from sf.mmck.parameters import ParameterValues
 
 UIC_NAME = 'mainwindow.ui'
 UIC_PATH = os.path.join(os.path.dirname(__file__), UIC_NAME)
@@ -131,6 +129,8 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
 
     def setup_note_player(self):
         self.note_player = NotePlayer(self.sunvox_process.slot, self)
+        self.note_player.noteOn.connect(self.on_note_player_noteOn)
+        self.note_player.noteOff.connect(self.on_note_player_noteOff)
 
     def setup_cc_mapper(self):
         self.cc_mapper = CCMapper(self.sunvox_process.slot, self)
@@ -262,8 +262,16 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
 
     @pyqtSlot(str, int)
     def on_cc_mapper_controlValueChanged(self, name, value):
-        print(name, value)
         self.controllers_manager.set_ctl_value(name, value)
+
+    @pyqtSlot(int, int, int)
+    def on_note_player_noteOn(self, track, note, velocity):
+        module = 2
+        self.slot.send_event(track, note + 1, velocity, module, 0, 0)
+
+    @pyqtSlot(int)
+    def on_note_player_noteOff(self, track):
+        self.slot.send_event(track, NOTECMD.NOTE_OFF, 0, 0, 0, 0)
 
     @pyqtSlot()
     def on_action_export_metamodule_triggered(self):

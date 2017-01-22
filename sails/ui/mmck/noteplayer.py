@@ -1,28 +1,57 @@
 from PyQt5.QtCore import QObject, pyqtSlot
-
-from sunvox.api import NOTECMD
+from PyQt5.QtCore import pyqtSignal
 
 from sails import midi
 
 
 class NotePlayer(QObject):
 
+    noteOn = pyqtSignal(int, int, int)  # track, note, velocity
+    noteOff = pyqtSignal(int)  # track
+
     def __init__(self, slot, parent=None):
         super().__init__(parent)
         self.slot = slot
-        self.active_playback_notes = 0
+        self.polyphony = 16
+        self.tracks_active = [False] * 16
         midi.listener.message_received.connect(self.on_midi_listener_message_received)
+
+    @property
+    def polyphony(self):
+        return self._polyphony
+
+    @polyphony.setter
+    def polyphony(self, value):
+        self._polyphony = value
+        self.reset()
+
+    def flush_old_if_full(self):
+        if len(self.note_tracks) == self.polyphony:
+            _, track = self.note_tracks.pop(0)
+            self.tracks_active[track] = False
+            self.noteOff.emit(track)
+
+    def reset(self):
+        for track in range(16):
+            self.noteOff.emit(track)
+        self.note_tracks = []  # (note, track)
 
     @pyqtSlot(str, 'PyQt_PyObject')
     def on_midi_listener_message_received(self, port_name, message):
         note_on = message.type == 'note_on'
         note_off = message.type == 'note_off'
         if note_on and message.velocity > 0:
-            note = message.note + 1
-            self.slot.send_event(0, note, message.velocity, 2, 0, 0)
-            self.active_playback_notes += 1
+            self.flush_old_if_full()
+            track = self.tracks_active.index(False)
+            self.tracks_active[track] = True
+            note = message.note
+            velocity = message.velocity
+            self.note_tracks.append((note, track))
+            self.noteOn.emit(track, note, velocity)
         elif note_off or (note_on and message.velocity == 0):
-            self.active_playback_notes -= 1
-            self.active_playback_notes = max(self.active_playback_notes, 0)
-            if self.active_playback_notes == 0:
-                self.slot.send_event(0, NOTECMD.NOTE_OFF, 0, 0, 0, 0)
+            for i, (note, track) in enumerate(self.note_tracks):
+                if note == message.note:
+                    self.tracks_active[track] = False
+                    del self.note_tracks[i]
+                    self.noteOff.emit(track)
+                    break
