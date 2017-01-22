@@ -114,11 +114,11 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
             root_group=EMPTY_GROUP,
         )
         self.controllers_manager.mappingChanged.connect(
-            self.on_controllers_manager_mapping_changed)
+            self.on_controllers_manager_mappingChanged)
         self.controllers_manager.valueChanged.connect(
-            self.on_controllers_manager_value_changed)
+            self.on_controllers_manager_valueChanged)
         self.controllers_manager.udcChanged.connect(
-            self.on_controllers_manager_udc_changed)
+            self.on_controllers_manager_udcChanged)
 
     def setup_file_watcher(self):
         self.file_watcher = FileWatcher(self)
@@ -209,7 +209,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
             App.settings.endGroup()
 
     @pyqtSlot(str, str)
-    def on_controllers_manager_mapping_changed(self, alias, name):
+    def on_controllers_manager_mappingChanged(self, alias, name):
         # first remove existing controller/alias mappings
         for a in list(self.controller_aliases[name]):
             if name in self.alias_controllers[a]:
@@ -220,7 +220,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         self.controller_aliases[name].add(alias)
 
     @pyqtSlot(int, str)
-    def on_controllers_manager_value_changed(self, value, name):
+    def on_controllers_manager_valueChanged(self, value, name):
         c = self.controllers_manager.root_group
         if c:
             controller = c[name]
@@ -230,7 +230,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
             self.slot.send_event(0, 0, 0, mod, ctl << 8, pvalue)
 
     @pyqtSlot(int, str)
-    def on_controllers_manager_udc_changed(self, pos, name):
+    def on_controllers_manager_udcChanged(self, pos, name):
         pos -= 1
         if pos < 0 or pos > 26:
             return
