@@ -25,11 +25,9 @@ class CCMapper(QObject):
                 for name in self.parent().alias_controllers[alias]:
                     # map message.value to controller range
                     c = self.parent().controllers_manager.root_group
-                    print(name, c.keys())
                     if not c or name not in c:
                         continue
                     controller = c[name]
-                    print(controller)
                     ctl = controller.ctl
                     value_type = ctl.value_type
                     if isinstance(value_type, Range):
