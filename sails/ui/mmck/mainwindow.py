@@ -283,7 +283,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
                     project = self.kit.project.write_to(f)
                     f.seek(0)
                     project = rv.read_sunvox_file(f)
-                metamod = rv.m.MetaModule(project=project)
+                metamod = rv.m.MetaModule(project=project, name=project.name)
                 assignments = self.udc_assignments[:]
                 while assignments and not assignments[-1]:
                     assignments.pop()
