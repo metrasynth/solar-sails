@@ -296,32 +296,16 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
                         metamod.user_defined[i].label = name
                     else:
                         # bundle into multictl
-                        mappings = []
-                        mods = []
-                        for name in names:
-                            controller = self.kit.controllers[name]
-                            ctl = controller.ctl
-                            t = ctl.value_type
-                            if isinstance(t, type) and issubclass(t, Enum):
-                                mapmin, mapmax = 0, len(t) - 1
-                            elif t is bool:
-                                mapmin, mapmax = 0, 1
-                            elif t.min == 1:
-                                mapmin, mapmax = t.min, t.max
-                            else:
-                                mapmin, mapmax = 0, 0x8000
-                            mappings.append((mapmin, mapmax, ctl.number))
-                            mods.append(project.modules[controller.module.index])
-                        bundle = project.new_module(
-                            rv.m.MultiCtl,
-                            name='bundle-{}'.format(i + 1),
+                        c = self.kit.controllers
+                        macro = rv.m.MultiCtl.macro(
+                            project,
+                            *[(c[name].module, c[name].ctl) for name in names],
+                            name='macro-{}'.format(i + 1),
                             layer=7,
-                            mappings=mappings,
                             x=i * 80,
                             y=-80,
                         )
-                        bundle >> mods
-                        mapping.module = bundle.index
+                        mapping.module = macro.index
                         mapping.controller = 1
                         metamod.user_defined[i].label = ','.join(sorted(names))
                 synth = rv.Synth(metamod)
