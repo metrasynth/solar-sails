@@ -149,6 +149,13 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         if hasattr(self, 'udc_manager'):
             self.udc_manager.assignments = self.udc_assignments
 
+    def prune_udc_assignments(self):
+        for names in self.udc_assignments:
+            for name in names.copy():
+                if name not in self.kit.controllers:
+                    names.remove(name)
+        self.udc_manager.assignments = self.udc_assignments
+
     # noinspection PyBroadException
     def load_file(self, path):
         self.loaded_path = path
@@ -187,10 +194,13 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
                 midmap.message_parameter = cc
 
     def rebuild_project(self):
+        values = self.controllers_manager.save_values()
         del self.kit.project
         self.sunvox_process.slot.load(self.kit.project)
         self.controllers_manager.root_group = self.kit.controllers
-        self.clear_udc_assignments()
+        self.controllers_manager.restore_values(values)
+        self.prune_udc_assignments()
+        self.controllers_manager.restore_udc_assignments(self.udc_assignments)
 
     def load_kit_parameter_values(self):
         App.settings.beginGroup('mmck_params')

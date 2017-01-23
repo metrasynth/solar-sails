@@ -102,6 +102,33 @@ class ControllersManager(QObject):
         if layout is self.root_layout:
             layout.addStretch(1)
 
+    def _save_values(self, prefix='', group=None):
+        if group is None:
+            group = self.root_group
+        for key, x in group.items():
+            if isinstance(x, Group):
+                prefix2 = '{}.'.format(key)
+                for key2, value2 in self._save_values(prefix2, x):
+                    yield key2, value2
+            else:
+                yield '{}{}'.format(prefix, key), x.value
+
+    def save_values(self):
+        return OrderedDict(self._save_values())
+
+    def restore_values(self, values):
+        for key, value in values.items():
+            if key in self.widgets:
+                if hasattr(value, 'value'):
+                    value = value.value
+                self.set_ctl_value(key, value)
+
+    def restore_udc_assignments(self, assignments):
+        for i, names in enumerate(assignments, 1):
+            for name in names:
+                widget = self.widgets[name]
+                widget.udc_combobox.setCurrentText(str(i))
+
 
 class ControllerWidget(QWidget):
 
