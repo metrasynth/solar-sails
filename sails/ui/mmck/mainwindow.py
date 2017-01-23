@@ -128,12 +128,12 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         self.sunvox_process = SunvoxProcess(self)
 
     def setup_note_player(self):
-        self.note_player = NotePlayer(self.sunvox_process.slot, self)
+        self.note_player = NotePlayer(self)
         self.note_player.noteOn.connect(self.on_note_player_noteOn)
         self.note_player.noteOff.connect(self.on_note_player_noteOff)
 
     def setup_cc_mapper(self):
-        self.cc_mapper = CCMapper(self.sunvox_process.slot, self)
+        self.cc_mapper = CCMapper(self)
         self.cc_mapper.controlValueChanged.connect(self.on_cc_mapper_controlValueChanged)
 
     @property

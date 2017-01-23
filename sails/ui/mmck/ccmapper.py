@@ -12,9 +12,8 @@ class CCMapper(QObject):
 
     controlValueChanged = pyqtSignal(str, int)
 
-    def __init__(self, slot, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
-        self.slot = slot
         midi.listener.message_received.connect(self.on_midi_listener_message_received)
 
     @pyqtSlot(str, 'PyQt_PyObject')
