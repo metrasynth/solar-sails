@@ -278,7 +278,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
     def on_action_export_metamodule_triggered(self):
         path = self.loaded_path
         if path:
-            with self.catcher:
+            with self.catcher(clear=False):
                 # make a clone of the project as we may be modifying it
                 with io.BytesIO() as f:
                     project = self.kit.project.write_to(f)
@@ -329,7 +329,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
     def on_action_export_project_triggered(self):
         path = self.loaded_path
         if path:
-            with self.catcher:
+            with self.catcher(clear=False):
                 project = self.kit.project
                 slug = project.name.lower().replace(' ', '-')
                 timestamp = now().strftime('%Y%m%d%H%M%S')

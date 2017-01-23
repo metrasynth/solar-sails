@@ -5,15 +5,20 @@ from PyQt5.QtWidgets import QPlainTextEdit, qApp
 
 class OutputCatcher(object):
 
-    def __init__(self, editor, keep_original=False):
+    def __init__(self, editor, keep_original=False, clear=True):
         """
         :type editor: QPlainTextEdit
         """
         self.editor = editor
         self.keep_original = keep_original
+        self.clear = clear
+
+    def __call__(self, keep_original=False, clear=True):
+        return OutputCatcher(self.editor, keep_original, clear)
 
     def __enter__(self):
-        self.editor.clear()
+        if self.clear:
+            self.editor.clear()
         self._orig_stdout = sys.stdout
         self._orig_stderr = sys.stderr
         sys.stdout = OutputWriter(
