@@ -13,8 +13,9 @@ class OutputCatcher(object):
         self.keep_original = keep_original
         self.clear = clear
 
-    def __call__(self, keep_original=False, clear=True):
-        return OutputCatcher(self.editor, keep_original, clear)
+    @property
+    def more(self):
+        return OutputCatcher(self.editor, self.keep_original, False)
 
     def __enter__(self):
         if self.clear:
