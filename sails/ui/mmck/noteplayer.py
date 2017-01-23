@@ -34,6 +34,7 @@ class NotePlayer(QObject):
         for track in range(16):
             self.noteOff.emit(track)
         self.note_tracks = []  # (note, track)
+        self.tracks_active = [False] * 16
 
     @pyqtSlot(str, 'PyQt_PyObject')
     def on_midi_listener_message_received(self, port_name, message):
