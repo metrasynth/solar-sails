@@ -21,7 +21,8 @@ class MidiListener(QObject):
         if (port_name not in self.port_listeners
                 and (virtual or port_name in available)):
             def listener(message):
-                self.message_received.emit(port_name, message)
+                if not App.settings.value('midi/ignore_midi_in_background') or App.activeWindow():
+                    self.message_received.emit(port_name, message)
             port = mido.backend.open_input(
                 port_name, callback=listener, virtual=virtual)
             self.port_listeners[port_name] = (port, listener)

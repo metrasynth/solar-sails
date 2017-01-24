@@ -21,6 +21,7 @@ class MidiSettingsWidget(MidiSettingsWidgetBase, Ui_MidiSettingsWidget):
 
     def setupUi(self, ui):
         super().setupUi(ui)
+        self.load_ignore_midi_in_background_setting()
         self.load_cc_mappings_text()
 
     def setup_model(self):
@@ -52,6 +53,14 @@ class MidiSettingsWidget(MidiSettingsWidgetBase, Ui_MidiSettingsWidget):
     @property
     def midi_in_unselected(self):
         return set(self.midi_in_model.stringList()) - self.midi_in_selected
+
+    def load_ignore_midi_in_background_setting(self):
+        App.settings.beginGroup('midi')
+        try:
+            ignore = App.settings.value('ignore_midi_in_background')
+            self.ignore_midi_in_background_checkbox.setChecked(bool(ignore))
+        finally:
+            App.settings.endGroup()
 
     def load_cc_mappings_text(self):
         App.settings.beginGroup('midi')
@@ -89,6 +98,15 @@ class MidiSettingsWidget(MidiSettingsWidgetBase, Ui_MidiSettingsWidget):
     @pyqtSlot()
     def on_midi_in_selection_changed(self):
         self.save_midi_in_seletion()
+
+    @pyqtSlot(bool)
+    def on_ignore_midi_in_background_checkbox_toggled(self, state):
+        App.settings.beginGroup('midi')
+        try:
+            ignore = self.ignore_midi_in_background_checkbox.isChecked()
+            App.settings.setValue('ignore_midi_in_background', ignore)
+        finally:
+            App.settings.endGroup()
 
     @pyqtSlot()
     def on_cc_mappings_textedit_textChanged(self):
