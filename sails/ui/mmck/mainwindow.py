@@ -1,3 +1,4 @@
+import json
 import os
 import traceback
 from collections import defaultdict
@@ -267,6 +268,15 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
                 mapping.module = macro.index
                 mapping.controller = 1
                 metamod.user_defined[i].label = ','.join(sorted(names))
+        mmckdata = project.new_module(rv.m.Sampler, name='mmckdata', layer=7, x=project.output.x, y=project.output.y)
+        s1 = mmckdata.samples[-1] = mmckdata.Sample()
+        s1.data = self.kit.py_source.encode('utf8')
+        s1.format = mmckdata.Format.int8
+        s1.channels = mmckdata.Channels.mono
+        s2 = mmckdata.samples[-2] = mmckdata.Sample()
+        s2.data = json.dumps(self.kit.parameter_values).encode('utf8')
+        s2.format = mmckdata.Format.int8
+        s2.channels = mmckdata.Channels.mono
         synth = rv.Synth(metamod)
         if filename is None:
             slug = project.name.lower().replace(' ', '-')
