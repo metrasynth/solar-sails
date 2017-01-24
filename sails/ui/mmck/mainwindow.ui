@@ -340,6 +340,28 @@
     <string>Output</string>
    </property>
   </action>
+  <action name="action_copy_to_sunvox_clipboard">
+   <property name="text">
+    <string>Copy to SunVox clipboard</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+C</string>
+   </property>
+  </action>
+  <action name="action_paste_from_sunvox_clipboard">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Paste from SunVox clipboard</string>
+   </property>
+   <property name="toolTip">
+    <string>Paste from SunVox clipboard</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+V</string>
+   </property>
+  </action>
   <zorder>udc_dockwidget</zorder>
  </widget>
  <resources/>

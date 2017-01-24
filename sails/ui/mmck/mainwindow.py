@@ -37,8 +37,10 @@ class MmckMainMenuBar(MainMenuBar):
 
     def create_menus(self):
         super().create_menus()
+        self.edit_menu = self.addMenu('&Edit')
         self.view_menu = self.addMenu('&View')
-        self.insertMenu(self.tools_menu.menuAction(), self.view_menu)
+        self.insertMenu(self.edit_menu.menuAction(), self.edit_menu)
+        self.insertMenu(self.view_menu.menuAction(), self.view_menu)
 
 
 class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
@@ -71,6 +73,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         menubar = self.menuBar()
         self.setup_dockwidget_menus(menubar)
         self.setup_file_menus(menubar)
+        self.setup_edit_menus(menubar)
 
     def setup_dockwidget_menus(self, menubar):
         for action in [
@@ -89,6 +92,13 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
             self.action_export_project,
         ]:
             menubar.file_menu.insertAction(sep, action)
+
+    def setup_edit_menus(self, menubar):
+        for action in [
+            self.action_copy_to_sunvox_clipboard,
+            self.action_paste_from_sunvox_clipboard,
+        ]:
+            menubar.edit_menu.addAction(action)
 
     def setup_parameters_manager(self):
         self.parameters_manager = ParametersManager(
@@ -218,6 +228,54 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         finally:
             App.settings.endGroup()
 
+    def export_metamodule(self, filename=None):
+        # make a clone of the project as we may be modifying it
+        with io.BytesIO() as f:
+            project = self.kit.project.write_to(f)
+            f.seek(0)
+            project = rv.read_sunvox_file(f)
+        metamod = rv.m.MetaModule(project=project, name=project.name)
+        assignments = self.udc_assignments[:]
+        while assignments and not assignments[-1]:
+            assignments.pop()
+        metamod.user_defined_controllers = len(assignments)
+        for i, names in enumerate(assignments):
+            mapping = metamod.mappings.values[i]
+            if len(names) == 0:
+                mapping.module = 0
+                mapping.controller = 1
+                metamod.user_defined[i].label = ''
+            elif len(names) == 1:
+                # direct connection
+                name = list(names).pop()
+                grpname, ctlname = name.split('.')
+                controller = self.kit.controllers[grpname][ctlname]
+                mapping.module = controller.module.index
+                mapping.controller = controller.ctl.number
+                metamod.user_defined[i].label = name
+            else:
+                # bundle into multictl
+                c = self.kit.controllers
+                macro = rv.m.MultiCtl.macro(
+                    project,
+                    *[(c[name].module, c[name].ctl) for name in names],
+                    name='macro-{}'.format(i + 1),
+                    layer=7,
+                    x=i * 80,
+                    y=-80,
+                )
+                mapping.module = macro.index
+                mapping.controller = 1
+                metamod.user_defined[i].label = ','.join(sorted(names))
+        synth = rv.Synth(metamod)
+        if filename is None:
+            slug = project.name.lower().replace(' ', '-')
+            timestamp = now().strftime('%Y%m%d%H%M%S')
+            filename = '{}-{}-{}.sunsynth'.format(self.loaded_path, slug, timestamp)
+        with open(filename, 'wb') as f:
+            synth.write_to(f)
+        print('Exported synth to {}'.format(filename))
+
     @pyqtSlot(str, str)
     def on_controllers_manager_mappingChanged(self, alias, name):
         # first remove existing controller/alias mappings
@@ -285,55 +343,25 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         self.slot.send_event(track, NOTECMD.NOTE_OFF, 0, 0, 0, 0)
 
     @pyqtSlot()
-    def on_action_export_metamodule_triggered(self):
-        path = self.loaded_path
-        if path:
+    def on_action_copy_to_sunvox_clipboard_triggered(self):
+        with self.catcher.more:
+            workspace_paths = App.settings.value('sunvox/workspace_paths')
+            if len(workspace_paths) == 0:
+                print('To copy to SunVox clipboard, set a workspace path in app settings')
+            else:
+                path = workspace_paths[0]
+                filename = os.path.join(path, '.sunvox_clipboard.sunsynth')
+                self.export_metamodule(filename)
+
+    @pyqtSlot()
+    def on_action_paste_from_sunvox_clipboard_triggered(self):
+        pass
+
+    @pyqtSlot()
+    def on_action_export_metamodule_triggered(self, filename=None):
+        if self.loaded_path:
             with self.catcher.more:
-                # make a clone of the project as we may be modifying it
-                with io.BytesIO() as f:
-                    project = self.kit.project.write_to(f)
-                    f.seek(0)
-                    project = rv.read_sunvox_file(f)
-                metamod = rv.m.MetaModule(project=project, name=project.name)
-                assignments = self.udc_assignments[:]
-                while assignments and not assignments[-1]:
-                    assignments.pop()
-                metamod.user_defined_controllers = len(assignments)
-                for i, names in enumerate(assignments):
-                    mapping = metamod.mappings.values[i]
-                    if len(names) == 0:
-                        mapping.module = 0
-                        mapping.controller = 1
-                        metamod.user_defined[i].label = ''
-                    elif len(names) == 1:
-                        # direct connection
-                        name = list(names).pop()
-                        grpname, ctlname = name.split('.')
-                        controller = self.kit.controllers[grpname][ctlname]
-                        mapping.module = controller.module.index
-                        mapping.controller = controller.ctl.number
-                        metamod.user_defined[i].label = name
-                    else:
-                        # bundle into multictl
-                        c = self.kit.controllers
-                        macro = rv.m.MultiCtl.macro(
-                            project,
-                            *[(c[name].module, c[name].ctl) for name in names],
-                            name='macro-{}'.format(i + 1),
-                            layer=7,
-                            x=i * 80,
-                            y=-80,
-                        )
-                        mapping.module = macro.index
-                        mapping.controller = 1
-                        metamod.user_defined[i].label = ','.join(sorted(names))
-                synth = rv.Synth(metamod)
-                slug = project.name.lower().replace(' ', '-')
-                timestamp = now().strftime('%Y%m%d%H%M%S')
-                filename = '{}-{}-{}.sunsynth'.format(path, slug, timestamp)
-                with open(filename, 'wb') as f:
-                    synth.write_to(f)
-                print('Exported synth to {}'.format(filename))
+                self.export_metamodule()
 
     @pyqtSlot()
     def on_action_export_project_triggered(self):
