@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QComboBox
 from PyQt5.QtWidgets import QGroupBox, QLabel, QVBoxLayout, QWidget, QHBoxLayout
 from rv.controller import Range
+from rv.modules.metamodule import UserDefinedProxy
 from sf.mmck.controllers import Controller, Group
 
 from sails.midi.ccmappings import cc_mappings
@@ -143,6 +144,8 @@ class ControllerWidget(QWidget):
         ctl = self.ctl = controller.ctl
         value = controller.value
         self.cc_combobox = None
+        if isinstance(ctl, UserDefinedProxy):
+            ctl = module.user_defined[ctl.number - 6]
         t = ctl.value_type
         if t is bool:
             t = BoolEnum
