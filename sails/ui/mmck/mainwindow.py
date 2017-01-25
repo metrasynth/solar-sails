@@ -187,7 +187,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
                 return
             else:
                 print('Finished loading at {}'.format(strftime('%c')))
-        self.file_watcher.path = path
+        self.file_watcher.paths = [path] + self.kit.watch_paths
 
     def auto_map_controllers(self):
         for alias, (name, w) in zip(cc_mappings.options[1:], self.controllers_manager.controller_widgets.items()):
