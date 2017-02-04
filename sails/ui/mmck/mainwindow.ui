@@ -362,6 +362,25 @@
     <string>Ctrl+Shift+V</string>
    </property>
   </action>
+  <action name="action_play_from_beginning">
+   <property name="text">
+    <string>Play from beginning</string>
+   </property>
+   <property name="shortcut">
+    <string>F11</string>
+   </property>
+  </action>
+  <action name="action_stop">
+   <property name="text">
+    <string>Stop</string>
+   </property>
+   <property name="toolTip">
+    <string>Stop</string>
+   </property>
+   <property name="shortcut">
+    <string>F12</string>
+   </property>
+  </action>
   <zorder>udc_dockwidget</zorder>
  </widget>
  <resources/>

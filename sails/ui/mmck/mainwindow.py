@@ -11,7 +11,7 @@ from PyQt5.uic import loadUiType
 from arrow import now
 import rv.api as rv
 from rv.cmidmap import MidiMessageType
-from rv.note import NOTECMD
+from rv.note import NOTE, NOTECMD
 from sails.midi.ccmappings import cc_mappings
 from sails.ui import App
 from sails.ui.mmck.ccmapper import CCMapper
@@ -39,8 +39,10 @@ class MmckMainMenuBar(MainMenuBar):
     def create_menus(self):
         super().create_menus()
         self.edit_menu = self.addMenu('&Edit')
+        self.transport_menu = self.addMenu('&Transport')
         self.view_menu = self.addMenu('&View')
         self.insertMenu(self.edit_menu.menuAction(), self.edit_menu)
+        self.insertMenu(self.transport_menu.menuAction(), self.transport_menu)
         self.insertMenu(self.view_menu.menuAction(), self.view_menu)
 
 
@@ -53,6 +55,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         self.loaded_path = None
         self.kit = Kit()
         self.setupUi(self)
+        self.play_started = False
 
     def setupUi(self, ui):
         super(MmckMainWindow, self).setupUi(ui)
@@ -75,6 +78,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         self.setup_dockwidget_menus(menubar)
         self.setup_file_menus(menubar)
         self.setup_edit_menus(menubar)
+        self.setup_transport_menus(menubar)
 
     def setup_dockwidget_menus(self, menubar):
         for action in [
@@ -100,6 +104,13 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
             self.action_paste_from_sunvox_clipboard,
         ]:
             menubar.edit_menu.addAction(action)
+
+    def setup_transport_menus(self, menubar):
+        for action in [
+            self.action_play_from_beginning,
+            self.action_stop,
+        ]:
+            menubar.transport_menu.addAction(action)
 
     def setup_parameters_manager(self):
         self.parameters_manager = ParametersManager(
@@ -385,3 +396,22 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
                 with open(filename, 'wb') as f:
                     project.write_to(f)
                 print('Exported project to {}'.format(filename))
+
+    @pyqtSlot()
+    def on_action_play_from_beginning_triggered(self):
+        with self.catcher.more:
+            print('Play from beginning')
+            self.slot.play_from_beginning()
+            self.play_started = True
+
+    @pyqtSlot()
+    def on_action_stop_triggered(self):
+        with self.catcher.more:
+            self.slot.stop()
+            self.slot.send_event(0, NOTECMD.ALL_NOTES_OFF, 0, 0, 0, 0)
+            if not self.play_started:
+                print('Clean synths')
+                self.slot.send_event(0, NOTECMD.CLEAN_SYNTHS, 0, 0, 0, 0)
+            else:
+                print('Stop')
+                self.play_started = False
