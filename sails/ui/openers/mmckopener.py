@@ -6,7 +6,7 @@ from .opener import Opener
 @Opener.register_opener
 class MmckOpener(Opener):
 
-    file_ext = '.mmck.py'
+    file_ext = '.mmckpy'
     file_type_label = 'MetaModule Construction Kit'
 
     @classmethod

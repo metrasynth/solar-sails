@@ -170,7 +170,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
     # noinspection PyBroadException
     def load_file(self, path):
         self.loaded_path = path
-        self.kit.name = os.path.basename(path)[:-len('.mmck.py')]
+        self.kit.name = os.path.basename(path)[:-len('.mmckpy')]
         self.setWindowTitle(path)
         self.parameters_manager.clear_widgets()
         with self.catcher:
