@@ -14,6 +14,8 @@ block_cipher = None
 datas = []
 for ui_dir in [
     '',
+    '/mmck',
+    '/mmck/controllers',
     '/polyphonist',
     '/settings',
     '/sun/synth',
@@ -51,7 +53,18 @@ a = Analysis(
     pathex=[SAILS_BASE_PATH],
     binaries=[],
     datas=datas,
-    hiddenimports=[],
+    hiddenimports=[
+        'mido.backends.rtmidi',
+        'py',
+        'py._builtin',
+        'py._code.source',
+        'py._error',
+        'py._path.local',
+        'py._std',
+        'pygraphviz',
+        'wave',
+        'wavio',
+    ],
     hookspath=[],
     runtime_hooks=[],
     excludes=[],
