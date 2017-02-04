@@ -9,6 +9,11 @@ import sunvox
 SAILS_BASE_PATH = os.path.abspath(os.path.dirname(sails.__file__))
 SUNVOX_LIB_PATH = os.path.join(os.path.dirname(sunvox.__file__), 'lib')
 
+
+def icon(ext):
+    return os.path.join(SAILS_BASE_PATH, '..', 'specs', 'solar_sails.{}'.format(ext))
+
+
 block_cipher = None
 
 datas = []
@@ -84,6 +89,7 @@ exe = EXE(
     a.scripts,
     exclude_binaries=True,
     name='sails-gui',
+    icon=icon('ico'),
     debug=False,
     strip=False,
     upx=True,
@@ -103,7 +109,7 @@ coll = COLLECT(
 app = BUNDLE(
     coll,
     name='Solar Sails.app',
-    icon=None,
+    icon=icon('icns'),
     bundle_identifier=None,
     info_plist={
         'NSHighResolutionCapable': 'True',
