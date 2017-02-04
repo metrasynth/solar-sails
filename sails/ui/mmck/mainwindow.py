@@ -356,8 +356,11 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
 
     @pyqtSlot(int, int, int)
     def on_note_player_noteOn(self, track, note, velocity):
-        module = 2
-        self.slot.send_event(track, note + 1, velocity, module, 0, 0)
+        note += 1
+        with self.catcher.more:
+            print('Note On: {!r}, {}'.format(NOTE(note), velocity))
+            module = 2
+            self.slot.send_event(track, note, velocity, module, 0, 0)
 
     @pyqtSlot(int)
     def on_note_player_noteOff(self, track):
