@@ -2,6 +2,7 @@ numpy
 pyrsistent
 scipy
 sounddevice
+wavio
 
 orbitant
 radiant-voices
