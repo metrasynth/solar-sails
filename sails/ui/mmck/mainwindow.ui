@@ -49,8 +49,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>378</width>
-         <height>555</height>
+         <width>494</width>
+         <height>330</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -138,8 +138,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>266</width>
-          <height>107</height>
+          <width>150</width>
+          <height>308</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -179,7 +179,7 @@
     <string>User Defined Controllers</string>
    </property>
    <attribute name="dockWidgetArea">
-    <number>1</number>
+    <number>8</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_3">
     <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -208,8 +208,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>266</width>
-          <height>107</height>
+          <width>456</width>
+          <height>202</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -240,7 +240,7 @@
     <string>Output</string>
    </property>
    <attribute name="dockWidgetArea">
-    <number>1</number>
+    <number>8</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_2">
     <layout class="QVBoxLayout" name="verticalLayout_2">
