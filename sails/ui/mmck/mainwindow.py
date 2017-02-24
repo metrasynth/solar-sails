@@ -20,6 +20,7 @@ from sails.ui.mmck.noteplayer import NotePlayer
 from sails.ui.mmck.sunvoxprocess import SunvoxProcess
 from sails.ui.mmck.udcmanager import UdcManager
 from sails.ui.outputcatcher import OutputCatcher
+from sf.mmck.controllers import Controller
 from sf.mmck.kit import Kit
 
 from sails.ui.mainmenubar import MainMenuBar
@@ -240,12 +241,33 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         finally:
             App.settings.endGroup()
 
-    def export_metamodule(self, filename=None):
+    def exportable_project(self):
         # make a clone of the project as we may be modifying it
         with io.BytesIO() as f:
             project = self.kit.project.write_to(f)
             f.seek(0)
             project = rv.read_sunvox_file(f)
+        # store MMCK metadata
+        mmckdata = project.new_module(rv.m.Sampler, name='mmckdata', layer=7, x=project.output.x, y=project.output.y)
+        s1 = mmckdata.samples[-1] = mmckdata.Sample()
+        s1.data = self.kit.py_source.encode('utf8')
+        s1.format = mmckdata.Format.int8
+        s1.channels = mmckdata.Channels.mono
+        s2 = mmckdata.samples[-2] = mmckdata.Sample()
+        s2.data = json.dumps(self.kit.parameter_values).encode('utf8')
+        s2.format = mmckdata.Format.int8
+        s2.channels = mmckdata.Channels.mono
+        s3 = mmckdata.samples[-3] = mmckdata.Sample()
+        s3.data = json.dumps(
+            list(self.kit.controllers.all_items()),
+            default=Controller.to_json,
+        ).encode('utf8')
+        s3.format = mmckdata.Format.int8
+        s3.channels = mmckdata.Channels.mono
+        return project
+
+    def export_metamodule(self, filename=None):
+        project = self.exportable_project()
         metamod = rv.m.MetaModule(project=project, name=project.name, apply_velocity_to_project=True)
         assignments = self.udc_assignments[:]
         while assignments and not assignments[-1]:
@@ -279,15 +301,6 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
                 mapping.module = macro.index
                 mapping.controller = 1
                 metamod.user_defined[i].label = ','.join(sorted(names))
-        mmckdata = project.new_module(rv.m.Sampler, name='mmckdata', layer=7, x=project.output.x, y=project.output.y)
-        s1 = mmckdata.samples[-1] = mmckdata.Sample()
-        s1.data = self.kit.py_source.encode('utf8')
-        s1.format = mmckdata.Format.int8
-        s1.channels = mmckdata.Channels.mono
-        s2 = mmckdata.samples[-2] = mmckdata.Sample()
-        s2.data = json.dumps(self.kit.parameter_values).encode('utf8')
-        s2.format = mmckdata.Format.int8
-        s2.channels = mmckdata.Channels.mono
         synth = rv.Synth(metamod)
         if filename is None:
             slug = project.name.lower().replace(' ', '-')
@@ -392,7 +405,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         path = self.loaded_path
         if path:
             with self.catcher.more:
-                project = self.kit.project
+                project = self.exportable_project()
                 slug = project.name.lower().replace(' ', '-')
                 timestamp = now().strftime('%Y%m%d%H%M%S')
                 filename = '{}-{}-{}.sunvox'.format(path, slug, timestamp)
