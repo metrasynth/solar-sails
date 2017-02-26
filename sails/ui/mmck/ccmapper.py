@@ -36,7 +36,8 @@ class CCMapper(QObject):
                     elif value_type is bool:
                         min_value, max_value = 0, 1
                     else:
-                        raise Exception('Unknown type {}'.format(value_type))
+                        print('Unknown value_type {}'.format(value_type))
+                        continue
                     range = max_value - min_value
                     factor = range / 127.0
                     value = int(message.value * factor)

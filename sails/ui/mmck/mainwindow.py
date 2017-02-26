@@ -216,10 +216,12 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
                 midmap.message_type = MidiMessageType.control_change
                 midmap.message_parameter = cc
 
+    # noinspection PyBroadException
     def rebuild_project(self):
         values = self.controllers_manager.save_values()
         del self.kit.project
-        self.sunvox_process.slot.load(self.kit.project)
+        project = self.kit.project
+        self.sunvox_process.slot.load(project)
         self.controllers_manager.root_group = self.kit.controllers
         self.controllers_manager.restore_values(values)
         self.prune_udc_assignments()
@@ -350,13 +352,13 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
             try:
                 self.rebuild_project()
                 self.auto_map_controllers()
+                if self.kit.name:
+                    self.save_kit_parameter_values()
             except Exception:
                 print(traceback.format_exc())
                 return
             else:
                 print('Rebuilt project at {}'.format(strftime('%c')))
-        if self.kit.name:
-            self.save_kit_parameter_values()
 
     @pyqtSlot()
     def on_file_watcher_fileChanged(self):

@@ -2,6 +2,7 @@ from collections import OrderedDict
 from enum import Enum
 
 from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QComboBox
 from PyQt5.QtWidgets import QGroupBox, QLabel, QVBoxLayout, QWidget, QHBoxLayout
@@ -43,8 +44,8 @@ class ControllersManager(QObject):
         self._root_group = value
         self.create_widgets()
 
-    def set_ctl_value(self, name, value):
-        self.widgets[name].set_ctl_value(value)
+    def set_ctl_value(self, name, value, value_type=None):
+        self.widgets[name].set_ctl_value(value, value_type)
 
     def clear_widgets(self):
         for w in self.widgets.values():
@@ -112,17 +113,23 @@ class ControllersManager(QObject):
                 for key2, value2 in self._save_values(prefix2, x):
                     yield key2, value2
             else:
-                yield '{}{}'.format(prefix, key), x.value
+                yield '{}{}'.format(prefix, key), (x.value, x.ctl.value_type)
 
     def save_values(self):
         return OrderedDict(self._save_values())
 
     def restore_values(self, values):
-        for key, value in values.items():
+        set_values = []
+        for key, (value, value_type) in values.items():
             if key in self.widgets:
                 if hasattr(value, 'value'):
                     value = value.value
-                self.set_ctl_value(key, value)
+                set_values.append((key, value, value_type))
+        if set_values:
+            def set_ctl_values():
+                for k, v, vt in set_values:
+                    self.set_ctl_value(k, v, vt)
+            QTimer.singleShot(0, set_ctl_values)
 
     def restore_udc_assignments(self, assignments):
         for i, names in enumerate(assignments, 1):
@@ -194,8 +201,12 @@ class ControllerWidget(QWidget):
             self.cc_combobox.setCurrentText(alias)
             self.mappingChanged.emit(alias, self.name)
 
-    def set_ctl_value(self, value):
-        self.managed_widget.set_ctl_value(value)
+    def set_ctl_value(self, value, value_type=None):
+        if not value_type or value_type == self.managed_widget.value_type:
+            self.managed_widget.set_ctl_value(value)
+        else:
+            print('INFO: {} expected {}, got {}'.format(
+                self.name, self.managed_widget.value_type, value_type))
 
 
 class GroupWidget(QGroupBox):
