@@ -185,6 +185,13 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
                     names.remove(name)
         self.udc_manager.assignments = self.udc_assignments
 
+    def update_udc_assignments(self, assignments):
+        for existing, new in zip(self.udc_assignments, assignments):
+            existing.update({new} if isinstance(new, str) else new)
+        if hasattr(self, 'udc_manager'):
+            self.udc_manager.assignments = self.udc_assignments
+        self.controllers_manager.restore_udc_assignments(self.udc_assignments)
+
     # noinspection PyBroadException
     def load_file(self, path):
         self.loaded_path = path
@@ -200,6 +207,8 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
                 self.rebuild_project()
                 self.auto_map_controllers()
                 self.clear_udc_assignments()
+                if hasattr(self.kit.py_module, 'udc_assignments'):
+                    self.update_udc_assignments(self.kit.py_module.udc_assignments(self.kit.parameters))
             except Exception:
                 print(traceback.format_exc())
                 return
