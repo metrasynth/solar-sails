@@ -39,6 +39,9 @@ class OutputWriter(object):
         self.editor = editor
         self.file = file
 
+    def flush(self):
+        return self.file.flush() if self.file else None
+
     def write(self, s):
         self.file.write(s) if self.file else None
         self.editor.insertPlainText(s)

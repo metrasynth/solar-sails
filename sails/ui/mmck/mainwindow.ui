@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>645</width>
-    <height>598</height>
+    <width>1039</width>
+    <height>671</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -49,8 +49,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>494</width>
-         <height>330</height>
+         <width>888</width>
+         <height>403</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -80,7 +80,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>645</width>
+     <width>1039</width>
      <height>22</height>
     </rect>
    </property>
@@ -139,7 +139,7 @@
           <x>0</x>
           <y>0</y>
           <width>150</width>
-          <height>308</height>
+          <height>381</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -208,7 +208,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>456</width>
+          <width>373</width>
           <height>202</height>
          </rect>
         </property>
@@ -302,17 +302,6 @@
     <string>Ctrl+E</string>
    </property>
   </action>
-  <action name="action_export_project">
-   <property name="text">
-    <string>&amp;Export Project</string>
-   </property>
-   <property name="toolTip">
-    <string>Export Project</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+E</string>
-   </property>
-  </action>
   <action name="action_view_parameters">
    <property name="checkable">
     <bool>true</bool>
@@ -388,6 +377,28 @@
    </property>
    <property name="shortcut">
     <string>F12</string>
+   </property>
+  </action>
+  <action name="action_export_project">
+   <property name="text">
+    <string>&amp;Export Project</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Project</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+E</string>
+   </property>
+  </action>
+  <action name="action_export_wav">
+   <property name="text">
+    <string>&amp;Export WAV</string>
+   </property>
+   <property name="toolTip">
+    <string>Export WAV</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+E</string>
    </property>
   </action>
   <zorder>udc_dockwidget</zorder>

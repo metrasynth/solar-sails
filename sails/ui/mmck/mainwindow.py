@@ -5,27 +5,32 @@ from collections import defaultdict
 from time import strftime
 
 import io
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, Qt
+from PyQt5.QtWidgets import QProgressDialog
 from PyQt5.uic import loadUiType
 
 from arrow import now
+import numpy as np
 import rv.api as rv
 from rv.cmidmap import MidiMessageType
 from rv.note import NOTE, NOTECMD
 from sails.midi.ccmappings import cc_mappings
 from sails.ui import App
+from sails.ui.mainmenubar import MainMenuBar
 from sails.ui.mmck.ccmapper import CCMapper
+from sails.ui.mmck.controllers.manager import ControllersManager, Group
 from sails.ui.mmck.filewatcher import FileWatcher
 from sails.ui.mmck.noteplayer import NotePlayer
+from sails.ui.mmck.parameters.manager import ParametersManager
 from sails.ui.mmck.sunvoxprocess import SunvoxProcess
 from sails.ui.mmck.udcmanager import UdcManager
 from sails.ui.outputcatcher import OutputCatcher
+from scipy.io import wavfile
 from sf.mmck.controllers import Controller
 from sf.mmck.kit import Kit
+from sunvox.api import Slot
+from sunvox.buffered import BufferedProcess, float32
 
-from sails.ui.mainmenubar import MainMenuBar
-from sails.ui.mmck.parameters.manager import ParametersManager
-from sails.ui.mmck.controllers.manager import ControllersManager, Group
 
 UIC_NAME = 'mainwindow.ui'
 UIC_PATH = os.path.join(os.path.dirname(__file__), UIC_NAME)
@@ -96,6 +101,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
             self.action_save_as,
             self.action_export_metamodule,
             self.action_export_project,
+            self.action_export_wav,
         ]:
             menubar.file_menu.insertAction(sep, action)
 
@@ -414,6 +420,48 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
                 with open(filename, 'wb') as f:
                     project.write_to(f)
                 print('Exported project to {}'.format(filename))
+
+    @pyqtSlot()
+    def on_action_export_wav_triggered(self):
+        path = self.loaded_path
+        if path:
+            with self.catcher.more:
+                project = self.exportable_project()
+                slug = project.name.lower().replace(' ', '-')
+                timestamp = now().strftime('%Y%m%d%H%M%S')
+                filename = '{}-{}-{}.wav'.format(path, slug, timestamp)
+                freq = 44100
+                size = freq
+                channels = 2
+                data_type = float32
+                p = BufferedProcess(freq=freq, size=size, channels=channels, data_type=data_type)
+                slot = Slot(project, process=p)
+                length = slot.get_song_length_frames()
+                output = np.zeros((length, 2), data_type)
+                position = 0
+                slot.play_from_beginning()
+                dialog = QProgressDialog('Writing WAV to {}'.format(filename), 'Cancel', 0, length, self)
+                dialog.setWindowModality(Qt.WindowModal)
+                dialog.forceShow()
+                cancelled = False
+                while position < length:
+                    if dialog.wasCanceled():
+                        cancelled = True
+                        break
+                    buffer = p.fill_buffer()
+                    end_pos = min(position + freq, length)
+                    copy_size = end_pos - position
+                    output[position:end_pos] = buffer[:copy_size]
+                    position = end_pos
+                    dialog.setValue(position)
+                if not cancelled:
+                    wavfile.write(filename, freq, output)
+                    print('Exported project to {}'.format(filename))
+                else:
+                    print('Cancelled export')
+                p.deinit()
+                p.kill()
+                dialog.close()
 
     @pyqtSlot()
     def on_action_play_from_beginning_triggered(self):
