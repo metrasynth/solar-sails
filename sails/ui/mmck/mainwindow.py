@@ -5,7 +5,7 @@ from collections import defaultdict
 from time import strftime
 
 import io
-from PyQt5.QtCore import pyqtSlot, Qt
+from PyQt5.QtCore import pyqtSlot, Qt, QTimer
 from PyQt5.QtWidgets import QProgressDialog
 from PyQt5.uic import loadUiType
 
@@ -38,6 +38,8 @@ UIC_PATH = os.path.join(os.path.dirname(__file__), UIC_NAME)
 Ui_MmckMainWindow, MmckMainWindowBase = loadUiType(UIC_PATH)
 
 EMPTY_GROUP = Group()
+
+CONTROLLER_AUTOSAVE_TIMEOUT = 250
 
 
 class MmckMainMenuBar(MainMenuBar):
@@ -109,6 +111,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         for action in [
             self.action_copy_to_sunvox_clipboard,
             self.action_paste_from_sunvox_clipboard,
+            self.action_restore_controller_values,
         ]:
             menubar.edit_menu.addAction(action)
 
@@ -208,7 +211,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
                 self.auto_map_controllers()
                 self.clear_udc_assignments()
                 if hasattr(self.kit.py_module, 'udc_assignments'):
-                    self.update_udc_assignments(self.kit.py_module.udc_assignments(self.kit.parameters))
+                    self.update_udc_assignments(self.kit.py_module.udc_assignments(self.kit.parameter_values))
             except Exception:
                 print(traceback.format_exc())
                 return
@@ -231,7 +234,6 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
                 midmap.message_type = MidiMessageType.control_change
                 midmap.message_parameter = cc
 
-    # noinspection PyBroadException
     def rebuild_project(self):
         values = self.controllers_manager.save_values()
         del self.kit.project
@@ -255,6 +257,22 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         App.settings.beginGroup('mmck_params')
         try:
             App.settings.setValue(self.kit.name, dict(self.kit.parameter_values))
+        finally:
+            App.settings.endGroup()
+
+    def load_controller_values(self):
+        App.settings.beginGroup('mmck_controllers')
+        try:
+            values = dict(App.settings.value(self.kit.name))
+            self.controllers_manager.restore_values(values)
+        finally:
+            App.settings.endGroup()
+
+    def save_controller_values(self):
+        values = self.controllers_manager.save_values()
+        App.settings.beginGroup('mmck_controllers')
+        try:
+            App.settings.setValue(self.kit.name, dict(self.controllers_manager.save_values()))
         finally:
             App.settings.endGroup()
 
@@ -327,6 +345,18 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
             synth.write_to(f)
         print('Exported synth to {}'.format(filename))
 
+    def reset_save_timer(self):
+        if not hasattr(self, 'save_timer'):
+            t = self.save_timer = QTimer(self)
+            t.setSingleShot(True)
+            t.setInterval(CONTROLLER_AUTOSAVE_TIMEOUT)
+            t.timeout.connect(self.on_save_timer_timeout)
+        self.save_timer.start()
+
+    @pyqtSlot()
+    def on_save_timer_timeout(self):
+        self.save_controller_values()
+
     @pyqtSlot(str, str)
     def on_controllers_manager_mappingChanged(self, alias, name):
         # first remove existing controller/alias mappings
@@ -348,6 +378,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
             pvalue = ctl.pattern_value(value)
             setattr(mod, ctl.name, value)
             self.slot.send_event(0, 0, 0, mod.index + 1, ctl.number << 8, pvalue)
+            self.reset_save_timer()
 
     @pyqtSlot(int, str)
     def on_controllers_manager_udcChanged(self, pos, name):
@@ -438,7 +469,8 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
                 project = self.exportable_project()
                 slug = project.name.lower().replace(' ', '-')
                 timestamp = now().strftime('%Y%m%d%H%M%S')
-                filename = '{}-{}-{}.wav'.format(path, slug, timestamp)
+                bpm = project.initial_bpm / (project.initial_tpl / 6)
+                filename = '{}-{}-{}bpm-{}.wav'.format(path, slug, bpm, timestamp)
                 freq = 44100
                 size = freq
                 channels = 2
@@ -490,3 +522,9 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
             else:
                 print('Stop')
                 self.play_started = False
+
+    @pyqtSlot()
+    def on_action_restore_controller_values_triggered(self):
+        with self.catcher.more:
+            print('Restoring controller values')
+            self.load_controller_values()

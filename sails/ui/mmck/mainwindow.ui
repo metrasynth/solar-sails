@@ -208,7 +208,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>373</width>
+          <width>374</width>
           <height>202</height>
          </rect>
         </property>
@@ -399,6 +399,17 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+E</string>
+   </property>
+  </action>
+  <action name="action_restore_controller_values">
+   <property name="text">
+    <string>Restore Controller Values</string>
+   </property>
+   <property name="toolTip">
+    <string>Restore Controller Values</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
   <zorder>udc_dockwidget</zorder>
