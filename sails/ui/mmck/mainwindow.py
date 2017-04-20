@@ -6,7 +6,7 @@ from time import strftime
 
 import io
 from PyQt5.QtCore import pyqtSlot, Qt, QTimer
-from PyQt5.QtWidgets import QProgressDialog
+from PyQt5.QtWidgets import QFileDialog, QProgressDialog
 from PyQt5.uic import loadUiType
 
 from arrow import now
@@ -99,6 +99,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
     def setup_file_menus(self, menubar):
         sep = menubar.file_menu.insertSeparator(menubar.file_settings)
         for action in [
+            self.action_import_parameter_values,
             self.action_save,
             self.action_save_as,
             self.action_export_metamodule,
@@ -208,7 +209,6 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
                 self.load_kit_parameter_values()
                 self.parameters_manager.parameters = self.kit.parameters
                 self.rebuild_project()
-                self.auto_map_controllers()
                 self.clear_udc_assignments()
                 if hasattr(self.kit.py_module, 'udc_assignments'):
                     self.update_udc_assignments(self.kit.py_module.udc_assignments(self.kit.parameter_values))
@@ -243,6 +243,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         self.controllers_manager.restore_values(values)
         self.prune_udc_assignments()
         self.controllers_manager.restore_udc_assignments(self.udc_assignments)
+        self.auto_map_controllers()
 
     def load_kit_parameter_values(self):
         App.settings.beginGroup('mmck_params')
@@ -397,7 +398,6 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         with self.catcher:
             try:
                 self.rebuild_project()
-                self.auto_map_controllers()
                 if self.kit.name:
                     self.save_kit_parameter_values()
             except Exception:
@@ -528,3 +528,38 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         with self.catcher.more:
             print('Restoring controller values')
             self.load_controller_values()
+
+    @pyqtSlot()
+    def on_action_import_parameter_values_triggered(self):
+        with self.catcher.more:
+            filename, _ = QFileDialog.getOpenFileName(
+                parent=self,
+                caption='Import Parameter Values',
+                directory='.',
+                filter='Supported Files (*.sunsynth *.sunvox)',
+            )
+            if filename:
+                obj = rv.read_sunvox_file(filename)
+                if isinstance(obj, rv.Project):
+                    project = obj
+                elif isinstance(obj, rv.Synth) and isinstance(obj.module, rv.m.MetaModule):
+                    project = obj.module.project
+                else:
+                    print('{} is not a project or metamodule'.format(filename))
+                    return
+                mmckdata = None
+                for mod in reversed(project.modules):
+                    if mod.name == 'mmckdata':
+                        mmckdata = mod
+                        break
+                if not mmckdata:
+                    print('Could not find mmckdata module in {}'.format(filename))
+                    return
+                params = json.loads(mmckdata.samples[-2].data.decode('utf8'))
+                self.kit.parameter_values.update(params)
+                self.parameters_manager.parameters = self.kit.parameters
+                self.rebuild_project()
+                self.save_kit_parameter_values()
+                if hasattr(self.kit.py_module, 'udc_assignments'):
+                    self.update_udc_assignments(self.kit.py_module.udc_assignments(self.kit.parameter_values))
+                print('Imported parameter values from {}'.format(filename))

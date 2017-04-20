@@ -412,6 +412,17 @@
     <string>Ctrl+R</string>
    </property>
   </action>
+  <action name="action_import_parameter_values">
+   <property name="text">
+    <string>Import Parameter Values</string>
+   </property>
+   <property name="toolTip">
+    <string>Import Parameter Values</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+  </action>
   <zorder>udc_dockwidget</zorder>
  </widget>
  <resources/>
