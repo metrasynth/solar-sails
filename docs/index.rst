@@ -6,6 +6,7 @@ Contents
 
     readme
     contributing
+    building
     changelog
     authors
     license
