@@ -423,6 +423,14 @@
     <string>Ctrl+I</string>
    </property>
   </action>
+  <action name="action_reset_parameter_values">
+   <property name="text">
+    <string>Reset Parameter Values</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset Parameter Values</string>
+   </property>
+  </action>
   <zorder>udc_dockwidget</zorder>
  </widget>
  <resources/>

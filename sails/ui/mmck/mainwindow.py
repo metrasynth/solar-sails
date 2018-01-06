@@ -100,6 +100,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         sep = menubar.file_menu.insertSeparator(menubar.file_settings)
         for action in [
             self.action_import_parameter_values,
+            self.action_reset_parameter_values,
             self.action_save,
             self.action_save_as,
             self.action_export_metamodule,
@@ -244,6 +245,10 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         self.prune_udc_assignments()
         self.controllers_manager.restore_udc_assignments(self.udc_assignments)
         self.auto_map_controllers()
+
+    def reset_parameter_values(self):
+        for name, param in self.kit.parameters.items():
+            self.kit.parameter_values[name] = param.default
 
     def load_kit_parameter_values(self):
         App.settings.beginGroup('mmck_params')
@@ -563,3 +568,9 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
                 if hasattr(self.kit.py_module, 'udc_assignments'):
                     self.update_udc_assignments(self.kit.py_module.udc_assignments(self.kit.parameter_values))
                 print('Imported parameter values from {}'.format(filename))
+
+    @pyqtSlot()
+    def on_action_reset_parameter_values_triggered(self):
+        with self.catcher.more:
+            self.reset_parameter_values()
+            self.parameters_manager.parameters = self.kit.parameters
