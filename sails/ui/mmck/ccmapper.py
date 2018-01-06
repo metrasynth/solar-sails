@@ -3,7 +3,7 @@ from enum import Enum
 from PyQt5.QtCore import QObject, pyqtSlot
 from PyQt5.QtCore import pyqtSignal
 
-from rv.controller import Range
+from rv.controller import DependentRange, Range
 from sails import midi
 from sails.midi.ccmappings import cc_mappings
 
@@ -29,6 +29,8 @@ class CCMapper(QObject):
                     controller = c[name]
                     ctl = controller.ctl
                     value_type = ctl.value_type
+                    if isinstance(value_type, DependentRange):
+                        value_type = value_type.parent(controller.module)
                     if isinstance(value_type, Range):
                         min_value, max_value = value_type.min, value_type.max
                     elif isinstance(value_type, type) and issubclass(value_type, Enum):

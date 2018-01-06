@@ -6,7 +6,7 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QComboBox
 from PyQt5.QtWidgets import QGroupBox, QLabel, QVBoxLayout, QWidget, QHBoxLayout
-from rv.controller import Range
+from rv.controller import Range, DependentRange
 from rv.modules.metamodule import UserDefinedProxy
 from sf.mmck.controllers import Controller, Group
 
@@ -134,8 +134,11 @@ class ControllersManager(QObject):
     def restore_udc_assignments(self, assignments):
         for i, names in enumerate(assignments, 1):
             for name in names:
-                widget = self.widgets[name]
-                widget.udc_combobox.setCurrentText(str(i))
+                widget = self.widgets.get(name)
+                if widget:
+                    widget.udc_combobox.setCurrentText(str(i))
+                else:
+                    print('Warning: Could not find widget for {!r}'.format(name))
 
 
 class ControllerWidget(QWidget):
@@ -157,6 +160,8 @@ class ControllerWidget(QWidget):
         if t is bool:
             t = BoolEnum
             value = BoolEnum(value)
+        if isinstance(t, DependentRange):
+            t = t.parent(module)
         if isinstance(t, Range):
             widget_class = RangeWidget
         elif isinstance(t, type) and issubclass(t, Enum):

@@ -381,7 +381,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
             controller = c[name]
             mod = controller.module
             ctl = controller.ctl
-            pvalue = ctl.pattern_value(value)
+            pvalue = ctl.pattern_value(mod, value)
             setattr(mod, ctl.name, value)
             self.slot.send_event(0, 0, 0, mod.index + 1, ctl.number << 8, pvalue)
             self.reset_save_timer()
