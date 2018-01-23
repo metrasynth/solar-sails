@@ -37,6 +37,10 @@ if sys.platform == 'win32':
             os.path.join(SUNVOX_LIB_PATH, 'windows', 'lib_x86', 'sunvox.dll'),
             '.',
         ),
+        (
+            os.path.join(SUNVOX_LIB_PATH, 'windows', 'lib_x86_64', 'sunvox.dll'),
+            '.',
+        ),
     ]
 elif sys.platform == 'linux':
     datas += [
