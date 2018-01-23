@@ -5,18 +5,18 @@ Building Solar Sails
 macOS
 =====
 
-From a Python 3.5 virtualenv ::
+From a Python 3.6 virtualenv ::
 
     $ pyinstaller -y specs/gui.spec
 
 Windows
 =======
 
-Install Anaconda Python 3.5
+Install Anaconda Python 3.6, 64-bit.
 
-conda create -n sv35 python=3.5 anaconda
+conda create -n sv36 python=3.6 anaconda
 
-activate sv35
+activate sv36
 
 python -m venv env
 
@@ -37,7 +37,7 @@ pip install pypiwin32 pyinstaller
 Linux
 =====
 
-Ensure python 3.5 is installed
+Ensure python 3.6 is installed
 
 kxstudio:
 
