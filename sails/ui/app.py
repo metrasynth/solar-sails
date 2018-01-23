@@ -1,3 +1,5 @@
+import os, sys
+
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QApplication
 
@@ -17,3 +19,6 @@ class App(QApplication):
         self.setOrganizationDomain('metrasynth.warmcommunity.space')
         self.setApplicationName('Solar Sails')
         App.settings = QSettings()
+        if sys.platform == 'darwin':
+            # Ensure access to GraphViz installed in /usr/local/bin
+            os.environ['PATH'] = f"{os.environ['PATH']}:/usr/local/bin"
