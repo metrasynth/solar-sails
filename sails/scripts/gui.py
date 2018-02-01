@@ -20,7 +20,8 @@ def main(*filenames: 'Files to open immediately'):
     app = App(sys.argv)
     midi.load()
     midi.listener.update_ports()
-    midi.listener.start_port_listener('Metrasynth Solar Sails', virtual=True)
+    virtual = sys.platform != 'win32'
+    midi.listener.start_port_listener('Metrasynth Solar Sails', virtual=virtual)
     app.aboutToQuit.connect(midi.listener.stop)
     loop = QEventLoop(app)
     asyncio.set_event_loop(loop)
