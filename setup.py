@@ -19,7 +19,6 @@ dependencies = [
     'pyrsistent',
     'python-osc',
     'quamash',
-    'qutepart',
     'solar-flares',
     'sunvosc',
 ]
