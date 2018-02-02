@@ -70,8 +70,6 @@ a = Analysis(
         'py._error',
         'py._path.local',
         'py._std',
-        'wave',
-        'wavio',
     ] + (['scipy._lib.messagestream', 'wave', 'wavio'] if sys.platform == 'darwin' else []),
     hookspath=[],
     runtime_hooks=[],
