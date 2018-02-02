@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.setrecursionlimit(5000)
 
 import sails.scripts.gui
 import sunvox
