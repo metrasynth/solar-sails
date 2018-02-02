@@ -70,7 +70,6 @@ a = Analysis(
         'py._error',
         'py._path.local',
         'py._std',
-        'pygraphviz',
         'wave',
         'wavio',
     ] + (['scipy._lib.messagestream', 'wave', 'wavio'] if sys.platform == 'darwin' else []),
