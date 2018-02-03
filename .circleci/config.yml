@@ -1,0 +1,28 @@
+version: 2
+jobs:
+  linux:
+    docker:
+      - image: circleci/python:3.6.4-stretch-browsers
+    steps:
+      - checkout
+      - run: "pip install -r requirements/app.txt"
+      - run: "pip install pyinstaller"
+      - run: "pip install -e ."
+      - run: "pyinstaller -y specs/gui.spec"
+  macos:
+    macos:
+      xcode: "8.2.1"
+    steps:
+      - "python --version"
+      - "brew --version"
+      - checkout
+      - run: "pip install -r requirements/app.txt"
+      - run: "pip install pyinstaller"
+      - run: "pip install -e ."
+      - run: "pyinstaller -y specs/gui.spec"
+workflows:
+  version: 2
+  everything:
+    jobs:
+      - linux
+      - macos
