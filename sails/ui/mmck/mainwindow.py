@@ -25,10 +25,7 @@ from sails.ui.mmck.parameters.manager import ParametersManager
 from sails.ui.mmck.sunvoxprocess import SunvoxProcess
 from sails.ui.mmck.udcmanager import UdcManager
 from sails.ui.outputcatcher import OutputCatcher
-try:
-    from scipy.io import wavfile
-except ImportError:
-    wavfile = None
+from scipy.io import wavfile
 from sf.mmck.controllers import Controller
 from sf.mmck.kit import Kit
 from sunvox.api import Slot
@@ -471,10 +468,6 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
 
     @pyqtSlot()
     def on_action_export_wav_triggered(self):
-        if wavfile is None:
-            with self.catcher.more:
-                print('WAV export only available on MacOS (for now!)')
-                return
         path = self.loaded_path
         if path:
             with self.catcher.more:
