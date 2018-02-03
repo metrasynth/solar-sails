@@ -28,9 +28,11 @@ jobs:
           command: |
             . venv/bin/activate
             pyinstaller -y specs/gui.spec
+            cd dist
+            tar cjvf solar-sails-linux-x64.tar.bz2 solar-sails
       - store_artifacts:
-          path: dist
-          destination: dist
+          path: dist/solar-sails-linux-x64.tar.bz2
+          destination: solar-sails-linux-x64.tar.bz2
   macos:
     macos:
       xcode: "8.2.1"
