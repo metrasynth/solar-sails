@@ -1,11 +1,14 @@
+networkx
 numpy
+PyQt5
 pyrsistent
 scipy
 sounddevice
 wavio
 
 orbitant
-radiant-voices
-sunvox-dll-python
-solar-flares
 sunvosc
+
+git+https://github.com/metrasynth/radiant-voices@ae57d50#egg=radiant-voices
+git+https://github.com/metrasynth/sunvox-dll-python@48159dc#egg=sunvox-dll-python
+git+https://github.com/metrasynth/solar-flares@7b7706c#egg=solar-flares

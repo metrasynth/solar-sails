@@ -1,0 +1,14 @@
+environment:
+    matrix:
+        - PYTHON: "c:\\python36-x64"
+platform: x64
+install:
+    - "%PYTHON%\\python.exe -m pip install -r requirements.txt"
+    - "%PYTHON%\\python.exe -m pip install pyinstaller"
+    - "%PYTHON%\\python.exe -m pip install -e ."
+build_script:
+    - "%PYTHON%\\scripts\\pyinstaller.exe -y specs\\gui.spec"
+    - "dir"
+    - "tree"
+artifacts:
+    - path: dist
