@@ -8,7 +8,5 @@ install:
     - "%PYTHON%\\python.exe -m pip install -e ."
 build_script:
     - "%PYTHON%\\scripts\\pyinstaller.exe -y specs\\gui.spec"
-    - "dir"
-    - "tree"
 artifacts:
     - path: dist

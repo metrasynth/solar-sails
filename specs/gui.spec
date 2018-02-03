@@ -113,12 +113,12 @@ exe = EXE(
     pyz,
     a.scripts,
     exclude_binaries=True,
-    name='sails-gui',
+    name='solar-sails',
     icon=icon('ico'),
     debug=False,
     strip=False,
     upx=True,
-    console=True,
+    console=False,
 )
 
 coll = COLLECT(
@@ -128,7 +128,7 @@ coll = COLLECT(
     a.datas,
     strip=False,
     upx=True,
-    name='sails-gui',
+    name='solar-sails',
 )
 
 app = BUNDLE(
