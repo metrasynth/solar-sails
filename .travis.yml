@@ -1,13 +1,12 @@
-language: python
-python:
-  - "3.6"
+os: osx
+osx_image: xcode8
 install:
-  - "sudo apt-get -qq update"
-  - "sudo apt-get -y install libsdl2-dev"
+  - "brew install python3"
+  - "python3 -m venv venv"
+  - ". venv/bin/activate"
   - "pip install -r requirements/app.txt"
   - "pip install -r requirements/tests.txt"
   - "pip install pyinstaller"
   - "pip install -e ."
 script:
-  - "py.test"
   - "pyinstaller -y specs/gui.spec"

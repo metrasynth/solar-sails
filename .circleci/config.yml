@@ -34,20 +34,8 @@ jobs:
       - store_artifacts:
           path: dist/solar-sails-linux-x64.tar.bz2
           destination: solar-sails-linux-x64.tar.bz2
-  macos:
-    macos:
-      xcode: "8.2.1"
-    steps:
-      - "python --version"
-      - "brew --version"
-#      - checkout
-#      - run: "pip install -r requirements/app.txt"
-#      - run: "pip install pyinstaller"
-#      - run: "pip install -e ."
-#      - run: "pyinstaller -y specs/gui.spec"
 workflows:
   version: 2
   everything:
     jobs:
       - linux
-      - macos
