@@ -1,6 +1,7 @@
 # -*- mode: python -*-
 
 import os
+import platform
 import sys
 sys.setrecursionlimit(5000)
 
@@ -9,6 +10,8 @@ import sunvox
 
 SAILS_BASE_PATH = os.path.abspath(os.path.dirname(sails.__file__))
 SUNVOX_LIB_PATH = os.path.join(os.path.dirname(sunvox.__file__), 'lib')
+
+BITS = 64 if platform.architecture()[0] == '64bit' else 32
 
 
 def icon(ext):
@@ -32,26 +35,30 @@ for ui_dir in [
         './sails/ui{}'.format(ui_dir),
     ))
 
-if sys.platform == 'win32':
-    datas += [
+binaries = []
+if sys.platform == 'win32' and BITS == 32:
+    binaries += [
         (
             os.path.join(SUNVOX_LIB_PATH, 'windows', 'lib_x86', 'sunvox.dll'),
             '.',
         ),
+    ]
+elif sys.platform == 'win32' and BITS == 64:
+    binaries += [
         (
             os.path.join(SUNVOX_LIB_PATH, 'windows', 'lib_x86_64', 'sunvox.dll'),
             '.',
         ),
     ]
 elif sys.platform == 'linux':
-    datas += [
+    binaries += [
         (
             os.path.join(SUNVOX_LIB_PATH, 'linux'),
             './sunvox/lib/linux',
         ),
     ]
 elif sys.platform == 'darwin':
-    datas += [
+    binaries += [
         (
             os.path.join(SUNVOX_LIB_PATH, 'osx'),
             './sunvox/lib/osx',
@@ -61,7 +68,7 @@ elif sys.platform == 'darwin':
 a = Analysis(
     [sails.scripts.gui.__file__],
     pathex=[SAILS_BASE_PATH],
-    binaries=[],
+    binaries=binaries,
     datas=datas,
     hiddenimports=[
         'mido.backends.rtmidi',
@@ -98,7 +105,7 @@ exe = EXE(
     debug=False,
     strip=False,
     upx=True,
-    console=False,
+    console=True,
 )
 
 coll = COLLECT(
