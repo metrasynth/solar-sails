@@ -16,9 +16,9 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install -qr requirements/app.txt
-            pip install -q pyinstaller
-            pip install -qe .
+            pip install -r requirements/app.txt | cat
+            pip install pyinstaller | cat
+            pip install -e . | cat
       - save_cache:
           paths:
             - ./venv
