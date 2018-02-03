@@ -6,7 +6,7 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - run: "apt-get -y install libsdl2-dev | cat"
+      - run: "sudo apt-get -y install libsdl2-dev | cat"
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "requirements/base.txt" }}
