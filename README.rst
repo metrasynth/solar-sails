@@ -3,12 +3,22 @@ Overview of Solar Sails
 
 ..  start-badges
 
-|buildstatus| |docs|
+|travisstatus| |circlestatus| |appveyorstatus| |docs|
 
-.. |buildstatus| image:: https://img.shields.io/travis/metrasynth/solar-sails.svg?style=flat
-    :alt: build status
+.. |circlestatus| image:: https://circleci.com/gh/metrasynth/solar-sails.svg?style=svg
+    :alt: Linux Build Status
+    :scale: 100%
+    :target: https://circleci.com/gh/metrasynth/solar-sails
+
+.. |travisstatus| image:: https://img.shields.io/travis/metrasynth/solar-sails.svg?style=flat
+    :alt: MacOS Build Status
     :scale: 100%
     :target: https://travis-ci.org/metrasynth/solar-sails
+
+.. |appveyorstatus| image:: https://ci.appveyor.com/api/projects/status/r56dscldcaxw56tq?svg=true
+    :alt: Windows Build Status
+    :scale: 100%
+    :target: https://ci.appveyor.com/project/gldnspud/solar-sails
 
 .. |docs| image:: https://readthedocs.org/projects/solar-sails/badge/?version=latest
     :alt: Documentation Status
@@ -16,14 +26,6 @@ Overview of Solar Sails
     :target: https://solar-sails.readthedocs.io/en/latest/?badge=latest
 
 ..  end-badges
-
-Part of the Metrasynth_ project.
-
-.. _Metrasynth: https://metrasynth.github.io/
-
-
-Purpose
--------
 
 "SunVox Augmentation and Interactive Live-coding System"
 
@@ -46,12 +48,41 @@ into a downloadable app that provides a workspace to make use of those tools.
     https://sunvox-dll-python.readthedocs.io/
 
 
-Requirements
-------------
+Downloading and installing
+--------------------------
 
-- Python 3.5
+Solar Sails is still alpha-quality software.
+
+Please follow the steps outlined in the `installation`_ docs.
+
+..  _installation:
+    https://solar-sails.readthedocs.io/en/latest/installing.html
+
+
+Requirements for downloadable app
+---------------------------------
+
+- MacOS 10.11 El Capitan, or later
+
+- Windows 7, or later, 64-bit install
+
+- Linux, 64-bit install, Ubuntu 16.04 or equivalent
+
+
+Requirements for building from source
+-------------------------------------
+
+- Python 3.6
 
 - OS supported by PyQt5_ and sunvox-dll-python_.
 
 ..  _PyQt5:
     https://pypi.org/project/PyQt5/
+
+
+Metrasynth
+----------
+
+Solar Sails is part of the Metrasynth_ project.
+
+.. _Metrasynth: https://metrasynth.github.io/

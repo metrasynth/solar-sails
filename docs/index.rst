@@ -5,6 +5,7 @@ Contents
     :maxdepth: 2
 
     readme
+    installing
     contributing
     building
     changelog
