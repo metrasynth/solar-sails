@@ -34,11 +34,14 @@ macOS
 10. If the app closes immediately the first time you open it, open it a second time.
     This is a known issue, but only occurs once each time you install and authorize a new version.
 
+If the app launches successfully, you'll see a small window containing large "Solar Sails" text.
+Now proceed to :doc:`getting-started`.
+
 ..  _Travis CI build page for Solar Sails:
     https://travis-ci.org/metrasynth/solar-sails
 
-If the app launches successfully, you'll see a small window containing large "Solar Sails" text.
-Now proceed to :doc:`getting-started`.
+..  _Open an app from an unidentified developer:
+    https://support.apple.com/kb/PH25088?locale=en_US
 
 
 Windows
