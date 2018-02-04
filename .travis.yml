@@ -11,3 +11,10 @@ install:
   - "pip install -e . | cat"
 script:
   - "pyinstaller -y specs/gui.spec"
+  - "cd dist"
+  - "tar cjvf 'Solar Sails.app.tar.bz2' 'Solar Sails.app'"
+addons:
+  artifacts:
+    working_dir: dist
+    paths:
+    - "Solar Sails.app.tar.bz2"
