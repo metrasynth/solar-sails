@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+. venv/bin/activate
+
 VERSION="$(python -c 'import sails; print(sails.build_number())')"
 echo ${VERSION} > solar-sails-version.txt
 pyinstaller -y specs/gui.spec
