@@ -63,8 +63,10 @@ The format is ``###=Label``.
 ``Label`` is how you want the CC to be labeled in the user interface.
 
 
-MetaModule Construction Kit
-===========================
+MetaModule Construction Kit (MMCK)
+==================================
+
+MMCK is a powerful tool for creating new SunVox MetaModules.
 
 Find out more at :doc:`mmck`.
 
