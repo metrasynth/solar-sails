@@ -11,27 +11,27 @@ macOS
 =====
 
 1.  Visit the `Travis CI build page for Solar Sails`_.
+    Click on the build job that says "Xcode: xcode8".
 
 2.  Scroll to the very bottom of the page.
+    Find the line that begins with ``download_url: ...``.
 
-3.  Find the line that begins with ``download_url: ...``.
+3.  Highlight the entire URL starting with ``https://s3.amazonaws.com`` and ending with ``.tar.bz2``.
 
-4.  Highlight the entire URL starting with ``https://s3.amazonaws.com`` and ending with ``.tar.bz2``.
+4.  Copy the URL to your clipboard.
 
-5.  Copy the URL to your clipboard.
-
-6.  Paste the URL into your browser location bar and press return.
+5.  Paste the URL into your browser location bar and press return.
     The download should begin.
 
-7.  After the download completes, open the downloaded ``Solar Sails.app.tar.bz2`` file to extract the app.
+6.  After the download completes, open the downloaded ``Solar Sails.app.tar.bz2`` file to extract the app.
 
-8.  Move the resulting Solar Sails app to your Applications folder.
+7.  Move the resulting Solar Sails app to your Applications folder.
 
-9.  Open the app.
+8.  Open the app.
     You will likely receive a warning dialog.
     Refer to Apple's `Open an app from an unidentified developer`_ page, and authorize the Solar Sails app.
 
-10. If the app closes immediately the first time you open it, open it a second time.
+9.  If the app closes immediately the first time you open it, open it a second time.
     This is a known issue, but only occurs once each time you install and authorize a new version.
 
 If the app launches successfully, you'll see a small window containing large "Solar Sails" text.
@@ -72,35 +72,25 @@ Now proceed to :doc:`getting-started`.
 Linux
 =====
 
-..  warning::
+1.  Visit the `Travis CI build page for Solar Sails`_.
+    Select the build job that says "Python: 3.6".
 
-    Currently, the Linux build does not correctly support MIDI input.
-    This warning will be removed once this bug has been fixed.
+2.  Scroll to the very bottom of the page.
+    Find the line that begins with ``download_url: ...``.
 
-1.  Visit the `CircleCI build page for Solar Sails`_.
+3.  Highlight the entire URL starting with ``https://s3.amazonaws.com`` and ending with ``.tar.bz2``.
 
-2.  Click on the most recent Success badge to view the latest build.
+4.  Copy the URL to your clipboard.
 
-3.  Append ``#artifacts/containers/0`` to the end of the URL in your browser's location bar and press enter.
-    The build artifacts will be revealed.
-
-4.  Click on ``solar-sails-linux-x64.tar.bz2``.
+5.  Paste the URL into your browser location bar and press return.
     The download should begin.
 
-5.  Using your preferred method, extract the contents of the file to your preferred location.
+6.  Using your preferred method, extract the contents of the file to your preferred location.
     A directory named ``solar-sails`` will be created within the destination.
 
-6.  In a terminal, run the following command to launch the app::
+7.  In a terminal (or using a launcher) run the following command inside the ``solar-sails`` directory to launch the app::
 
-        ./solar-sails
-
-    If you receive an ``ImportError`` about ``undefined symbol: drmFreeDevice``,
-    run this command instead::
-
-        LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libdrm.so.2 ./solar-sails
-
-..  _CircleCI build page for Solar Sails:
-    https://circleci.com/gh/metrasynth/solar-sails
+        ./solar-sails.sh
 
 If the app launches successfully, you'll see a small window containing large "Solar Sails" text.
 Now proceed to :doc:`getting-started`.
