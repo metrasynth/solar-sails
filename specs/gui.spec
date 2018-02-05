@@ -15,7 +15,7 @@ BITS = 64 if platform.architecture()[0] == '64bit' else 32
 
 
 def icon(ext):
-    return os.path.join(SAILS_BASE_PATH, '..', 'specs', 'solar_sails.{}'.format(ext))
+    return os.path.join(SAILS_BASE_PATH, '..', 'specs', f'solar_sails.{ext}')
 
 
 block_cipher = None
@@ -31,9 +31,11 @@ for ui_dir in [
     '/sun/vox',
 ]:
     datas.append((
-        '../sails/ui{}/*.ui'.format(ui_dir),
-        './sails/ui{}'.format(ui_dir),
+        f'../sails/ui{ui_dir}/*.ui',
+        f'./sails/ui{ui_dir}',
     ))
+if sys.platform == 'linux':
+    datas.append(('../solar-sails.sh', '.'))
 
 binaries = []
 if sys.platform == 'win32' and BITS == 32:
