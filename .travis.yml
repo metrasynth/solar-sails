@@ -1,20 +1,42 @@
-os: osx
-osx_image: xcode8
+matrix:
+  include:
+    - os: linux
+      language: python
+      python: "3.6"
+      dist: trusty
+      sudo: required
+      addons:
+        apt:
+          packages:
+            - libsdl2-dev
+            - librtmidi-dev
+            - libjack-dev
+            - libdrm-dev
+            - libasound2-dev
+        artifacts:
+          bucket: metrasynth-solar-sails-linux-builds
+          permissions: public-read
+          cache_control: "public, max-age=315360000"
+          working_dir: dist
+          paths:
+            - solar-sails-linux-x64.tar.bz2
+    - os: osx
+      osx_image: xcode8
+      language: generic
+      before_install:
+        - brew update
+        - brew install python3
+      addons:
+        artifacts:
+          bucket: metrasynth-solar-sails-macos-builds
+          permissions: public-read
+          cache_control: "public, max-age=315360000"
+          working_dir: dist
+          paths:
+            - "Solar Sails.app.tar.bz2"
+
 install:
-  - "brew update"
-  - "brew install python3"
-  - "python3 -m venv venv"
-  - ". venv/bin/activate"
-  - "pip install -r requirements/app.txt | cat"
-  - "pip install -r requirements/tests.txt | cat"
-  - "pip install pyinstaller | cat"
-  - "pip install -e . | cat"
+  - "./.travis/install.sh | cat"
+
 script:
-  - "pyinstaller -y specs/gui.spec"
-  - "cd dist"
-  - "tar cjvf 'Solar Sails.app.tar.bz2' 'Solar Sails.app'"
-addons:
-  artifacts:
-    working_dir: dist
-    paths:
-    - "Solar Sails.app.tar.bz2"
+  - "./.travis/script.sh | cat"
