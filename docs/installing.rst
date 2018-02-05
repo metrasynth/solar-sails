@@ -72,6 +72,11 @@ Now proceed to :doc:`getting-started`.
 Linux
 =====
 
+..  warning::
+
+    Currently, the Linux build does not correctly support MIDI input.
+    This warning will be removed once this bug has been fixed.
+
 1.  Visit the `CircleCI build page for Solar Sails`_.
 
 2.  Click on the most recent Success badge to view the latest build.
