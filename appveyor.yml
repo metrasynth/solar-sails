@@ -7,7 +7,7 @@ install:
     - "%PYTHON%\\python.exe -m pip install pyinstaller"
     - "%PYTHON%\\python.exe -m pip install -e ."
 build_script:
-    - "%PYTHON%\\python.exe -c 'import sails; print(sails.build_number())' > solar-sails-version.txt"
+    - '%PYTHON%\\python.exe -c "import sails; print(sails.build_number())" > solar-sails-version.txt'
     - "%PYTHON%\\scripts\\pyinstaller.exe -y specs\\gui.spec"
     # TODO: rename solar-sails to solar-sails-${VERSION} like the linux build does
 artifacts:
