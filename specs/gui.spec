@@ -36,6 +36,8 @@ for ui_dir in [
     ))
 if sys.platform == 'linux':
     datas.append(('../solar-sails.sh', '.'))
+if os.path.exists(os.path.join(SAILS_BASE_PATH, '..', 'solar-sails-version.txt')):
+    datas.append(('../solar-sails-version.txt', '.'))
 
 binaries = []
 if sys.platform == 'win32' and BITS == 32:
