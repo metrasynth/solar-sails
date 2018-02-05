@@ -36,12 +36,19 @@ Solar Sails will listen to MIDI note and CC events.
 
 MIDI listening is omnichannel.
 
+Solar Sails always listens to the interface named ``Metrasynth Solar Sails``.
+On Linux and MacOS, Solar Sails will create this as a virtual interface.
+On Windows, use the free loopMIDI_ app to create a virtual interface with this name.
+
+..  _loopMIDI:
+    http://www.tobias-erichsen.de/software/loopmidi.html
+
 Interfaces
 ..........
 
 Available MIDI interfaces are listed here.
 
-Solar Sails will listen only to selected interfaces.
+Solar Sails listens to selected interfaces.
 
 Click on an interface to select or deselect it.
 
@@ -52,6 +59,8 @@ Ignore MIDI in background
 .........................
 
 Turn this on if you want Solar Sails to ignore MIDI events when in the background.
+
+This can be useful when you are using the same MIDI controller to input notes into SunVox.
 
 CC Mappings
 ...........
