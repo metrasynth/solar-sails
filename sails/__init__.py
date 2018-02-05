@@ -8,6 +8,6 @@ def build_number():
     appveyor_commit = os.environ.get('APPVEYOR_REPO_COMMIT', None)
     commit = travis_commit or appveyor_commit or None
     if commit is not None:
-        return f'{__version__}pre-{commit}'
+        return f'{__version__}pre-{commit[:7]}'
     else:
         return __version__
