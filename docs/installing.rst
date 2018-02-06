@@ -72,25 +72,40 @@ Now proceed to :doc:`getting-started`.
 Linux
 =====
 
-1.  Visit the `Travis CI build page for Solar Sails`_.
-    Select the build job that says "Python: 3.6".
+It is difficult to provide a bundled package that works well across several Linux distributions.
+Therefore please follow the steps below for your distribution.
 
-2.  Scroll to the very bottom of the page.
-    Find the line that begins with ``download_url: ...``.
+Debian variants
+---------------
 
-3.  Highlight the entire URL starting with ``https://s3.amazonaws.com`` and ending with ``.tar.bz2``.
+Examples: Linux Mint, Ubuntu.
 
-4.  Copy the URL to your clipboard.
+(TBW)
 
-5.  Paste the URL into your browser location bar and press return.
-    The download should begin.
+Solus
+-----
 
-6.  Using your preferred method, extract the contents of the file to your preferred location.
-    A directory named ``solar-sails`` will be created within the destination.
+This is based on Solus 3 Budgie.
 
-7.  In a terminal (or using a launcher) run the following command inside the ``solar-sails`` directory to launch the app::
+First-time setup
+................
 
-        ./solar-sails.sh
+..  code-block:: shell-session
 
-If the app launches successfully, you'll see a small window containing large "Solar Sails" text.
-Now proceed to :doc:`getting-started`.
+      $ sudo eopkg install -c system.devel
+      $ sudo eopkg install alsa-lib-devel git
+      $ cd ~
+      $ git clone https://github.com/metrasynth/solar-sails
+      $ git clone https://github.com/metrasynth/gallery
+      $ cd ~/solar-sails
+      $ python3 -m venv venv
+      $ source venv/bin/activate
+      $ pip install -r requirements/app.txt
+      $ pip install -e .
+
+Starting Solar Sails
+....................
+
+..  code-block:: shell-session
+
+      $ ~/solar-sails/venv/bin/sails-gui <optional-mmckpy-pathname>
