@@ -96,6 +96,7 @@ First-time setup
       $ sudo eopkg install alsa-lib-devel git
       $ cd ~
       $ git clone https://github.com/metrasynth/solar-sails
+          # The following is optional, but contains many MMCK example scripts:
       $ git clone https://github.com/metrasynth/gallery
       $ cd ~/solar-sails
       $ python3 -m venv venv
