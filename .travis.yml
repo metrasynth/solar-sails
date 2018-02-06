@@ -1,25 +1,5 @@
 matrix:
   include:
-    - os: linux
-      language: python
-      python: "3.6"
-      dist: trusty
-      sudo: required
-      addons:
-        apt:
-          packages:
-            - libsdl2-dev
-            - librtmidi-dev
-            - libjack-dev
-            - libdrm-dev
-            - libasound2-dev
-        artifacts:
-          bucket: metrasynth-solar-sails-linux-builds
-          permissions: public-read
-          cache_control: "public, max-age=315360000"
-          working_dir: dist
-          paths:
-            - solar-sails-linux-x64.tar.bz2
     - os: osx
       osx_image: xcode8
       language: generic
