@@ -6,6 +6,8 @@ Contents
 
     readme
     installing
+    getting-started
+    mmck
     contributing
     building
     changelog
