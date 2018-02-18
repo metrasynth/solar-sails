@@ -75,12 +75,55 @@ Linux
 It is difficult to provide a bundled package that works well across several Linux distributions.
 Therefore please follow the steps below for your distribution.
 
-Debian variants
----------------
+Debian variants without Python 3.6
+----------------------------------
 
-Examples: Linux Mint, Ubuntu.
+Examples: Debian, Linux Mint, Ubuntu.
 
-(TBW)
+This assumes you cannot install ``python3-dev``, or if you do, only Python 3.5 is available.
+The steps below help you use ``pyenv`` to install Python 3.6.
+
+First-time setup
+................
+
+..  code-block:: shell-session
+
+      $ sudo apt install python-dev build-essential libasound2-dev librtmidi-dev libpcre3-dev \
+          zlib1g-dev libbz2-dev libreadline-dev libssl-dev libsqlite3-dev
+
+      $ git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+      $ echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+      $ echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+      $ echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi' >> ~/.bashrc
+      $ exec "$SHELL"
+
+      $ pyenv install 3.6.4
+      $ git clone https://github.com/metrasynth/solar-sails ~/solar-sails
+      $ cd solar-sails
+      $ pyenv shell 3.6.4
+      $ python --version  # => Python 3.6.4
+      $ python -m venv venv
+      $ source venv/bin/activate
+      $ pip install -r requirements/app.txt
+      $ pip install -e $PWD
+
+Starting Solar Sails
+....................
+
+..  code-block:: shell-session
+
+      $ ~/solar-sails/venv/bin/sails-gui <optional-mmckpy-pathname>
+
+Updating Solar Sails
+....................
+
+..  code-block:: shell-session
+
+      $ cd ~/solar-sails
+      $ source venv/bin/activate
+      $ git pull
+      $ pip install -r requirements/app.txt
+      $ pip install -e $PWD
 
 Solus
 -----
@@ -110,3 +153,14 @@ Starting Solar Sails
 ..  code-block:: shell-session
 
       $ ~/solar-sails/venv/bin/sails-gui <optional-mmckpy-pathname>
+
+Updating Solar Sails
+....................
+
+..  code-block:: shell-session
+
+      $ cd ~/solar-sails
+      $ source venv/bin/activate
+      $ git pull
+      $ pip install -r requirements/app.txt
+      $ pip install -e $PWD
