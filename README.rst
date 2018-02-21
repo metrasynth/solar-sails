@@ -3,12 +3,7 @@ Overview of Solar Sails
 
 ..  start-badges
 
-|travisstatus| |circlestatus| |appveyorstatus| |docs|
-
-.. |circlestatus| image:: https://circleci.com/gh/metrasynth/solar-sails.svg?style=svg
-    :alt: Linux Build Status
-    :scale: 100%
-    :target: https://circleci.com/gh/metrasynth/solar-sails
+|travisstatus| |appveyorstatus| |docs|
 
 .. |travisstatus| image:: https://img.shields.io/travis/metrasynth/solar-sails.svg?style=flat
     :alt: MacOS Build Status
