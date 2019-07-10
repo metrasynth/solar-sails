@@ -49,7 +49,7 @@ kxstudio:
 PipEnv
 ======
 
-  Setting up the environment ithin the solar-sails cloned folder ::
+  Setting up the environment within the solar-sails cloned folder ::
 
     $ pyenv local 3.6.3
     $ pipenv install
