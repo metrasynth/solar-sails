@@ -8,11 +8,11 @@ build = "python setup.py develop"
 start = "pipenv run sails-gui"
 
 [dev-packages]
+pyinstaller = "*"
 
 [packages]
 networkx = "*"
 numpy = "*"
-pyrsistent = "*"
 scipy = "*"
 sounddevice = "*"
 wavio = "*"
@@ -24,4 +24,4 @@ solar-flares = {git = "https://github.com/metrasynth/solar-flares",ref = "7b7706
 PyQt5 = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.8"

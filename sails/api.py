@@ -1,5 +1,3 @@
-import pyrsistent as p
-
 import rv.api
 import sf
 
@@ -15,14 +13,13 @@ n = rv.api.NOTECMD
 
 
 __all__ = [
-    'INIT',
-    'Session',
-    'c',
-    'module_clipboard_path',
-    'n',
-    'p',
-    'play',
-    'play_sunvosc',
-    'rv',
-    'sf',
+    "INIT",
+    "Session",
+    "c",
+    "module_clipboard_path",
+    "n",
+    "play",
+    "play_sunvosc",
+    "rv",
+    "sf",
 ]
