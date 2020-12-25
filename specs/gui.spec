@@ -98,6 +98,7 @@ a = Analysis(
         'scipy._lib.messagestream',
         'wave',
         'wavio',
+        'ffmpy',
     ],
     hookspath=[],
     runtime_hooks=[],
