@@ -6,16 +6,17 @@ from .opener import Opener
 @Opener.register_opener
 class MmckOpener(Opener):
 
-    file_ext = '.mmckpy'
-    file_type_label = 'MetaModule Construction Kit'
+    file_ext = ".mmckpy"
+    file_type_label = "MetaModule Construction Kit"
 
     @classmethod
     def main_window(cls, filename):
-        if not hasattr(qApp, '_tools_mmck'):
+        if not hasattr(qApp, "_tools_mmck"):
             from sails.ui.mmck.mainwindow import MmckMainWindow
+
             qApp._tools_mmck = MmckMainWindow()
         mmck = qApp._tools_mmck
-        mmck.show()
+        mmck.showMaximized()
         mmck.setFocus(True)
         mmck.load_file(filename)
         return mmck
