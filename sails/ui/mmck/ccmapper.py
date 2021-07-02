@@ -16,11 +16,11 @@ class CCMapper(QObject):
         super().__init__(parent)
         midi.listener.message_received.connect(self.on_midi_listener_message_received)
 
-    @pyqtSlot(str, 'PyQt_PyObject')
+    @pyqtSlot(str, "PyQt_PyObject")
     def on_midi_listener_message_received(self, port_name, message):
-        cc = message.type == 'control_change'
+        cc = message.type == "control_change"
         if cc:
-            for alias in cc_mappings.cc_aliases[message.control]:
+            for alias in cc_mappings.cc_aliases[(message.channel, message.control)]:
                 for name in self.parent().alias_controllers[alias]:
                     # map message.value to controller range
                     c = self.parent().controllers_manager.root_group
@@ -38,7 +38,7 @@ class CCMapper(QObject):
                     elif value_type is bool:
                         min_value, max_value = 0, 1
                     else:
-                        print('Unknown value_type {}'.format(value_type))
+                        print("Unknown value_type {}".format(value_type))
                         continue
                     range = max_value - min_value
                     factor = range / 127.0
