@@ -23,7 +23,9 @@ class EnumWidget(QComboBox):
         value = self.index_values[index]
         self.value_changed.emit(value)
 
-    def set_ctl_value(self, value):
+    def set_ctl_value(self, value, is_relative):
+        if is_relative:
+            value += self.currentIndex()
         for index, option in enumerate(self.value_type):
             if option.value == value:
                 self.setCurrentIndex(index)

@@ -44,8 +44,8 @@ class ControllersManager(QObject):
         self._root_group = value
         self.create_widgets()
 
-    def set_ctl_value(self, name, value, value_type=None):
-        self.widgets[name].set_ctl_value(value, value_type)
+    def set_ctl_value(self, name, value, value_type=None, is_relative=False):
+        self.widgets[name].set_ctl_value(value, value_type, is_relative)
 
     def clear_widgets(self):
         for w in self.widgets.values():
@@ -213,9 +213,9 @@ class ControllerWidget(QWidget):
             self.cc_combobox.setCurrentText(alias)
             self.mappingChanged.emit(alias, self.name)
 
-    def set_ctl_value(self, value, value_type=None):
+    def set_ctl_value(self, value, value_type=None, is_relative=False):
         if not value_type or value_type == self.managed_widget.value_type:
-            self.managed_widget.set_ctl_value(value)
+            self.managed_widget.set_ctl_value(value, is_relative=is_relative)
         else:
             print(
                 "INFO: {} expected {}, got {}".format(

@@ -27,13 +27,14 @@ class CCMappings(object):
             parts = [p.strip() for p in parts]
             cc, alias = parts
             try:
-                channel, cc = cc.split()
+                channel, cc, *options = cc.split()
                 channel = int(channel) - 1
                 cc = int(cc)
             except ValueError:
                 continue
-            self.cc_aliases[(channel, cc)].add(alias)
-            self.alias_ccs[alias].add((channel, cc))
+            options = frozenset(options)
+            self.cc_aliases[(channel, cc)].add((alias, options))
+            self.alias_ccs[alias].add((channel, cc, options))
 
     @property
     def options(self):

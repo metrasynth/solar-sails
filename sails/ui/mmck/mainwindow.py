@@ -445,9 +445,9 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         if self.loaded_path:
             self.load_file(self.loaded_path)
 
-    @pyqtSlot(str, int)
-    def on_cc_mapper_controlValueChanged(self, name, value):
-        self.controllers_manager.set_ctl_value(name, value)
+    @pyqtSlot(str, int, bool)
+    def on_cc_mapper_controlValueChanged(self, name, value, is_relative):
+        self.controllers_manager.set_ctl_value(name, value, is_relative=is_relative)
 
     @pyqtSlot(int, int, int)
     def on_note_player_noteOn(self, track, note, velocity):
