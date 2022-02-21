@@ -399,14 +399,17 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
     @pyqtSlot(int, str)
     def on_controllers_manager_valueChanged(self, value, name):
         c = self.controllers_manager.root_group
-        if c:
-            controller = c[name]
-            mod = controller.module
-            ctl = controller.ctl
-            pvalue = ctl.pattern_value(mod, value)
-            setattr(mod, ctl.name, value)
-            self.slot.send_event(0, 0, 0, mod.index + 1, ctl.number << 8, pvalue)
-            self.reset_save_timer()
+        if not c:
+            return
+        controller = c[name]
+        mod = controller.module
+        ctl = controller.ctl
+        pvalue = ctl.pattern_value(mod, value)
+        setattr(mod, ctl.name, value)
+        with self.catcher.more:
+            print(f"{ctl.number=} {value=} {pvalue=}")
+        self.slot.send_event(0, 0, 0, mod.index + 1, ctl.number << 8, pvalue)
+        self.reset_save_timer()
 
     @pyqtSlot(int, str)
     def on_controllers_manager_udcChanged(self, pos, name):
