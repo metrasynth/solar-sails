@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QComboBox
 from PyQt5.QtWidgets import QGroupBox, QLabel, QVBoxLayout, QWidget, QHBoxLayout
 from rv.controller import Range, DependentRange
-from rv.modules.metamodule import UserDefinedProxy
+from rv.modules.metamodule import MAX_USER_DEFINED_CONTROLLERS, UserDefinedProxy
 from sf.mmck.controllers import Controller, Group
 
 from sails.midi.ccmappings import cc_mappings
@@ -234,5 +234,5 @@ class GroupWidget(QGroupBox):
 class UdcComboBox(QComboBox):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.addItems(list(map(str, range(1, 28))))
         self.addItem("")
+        self.addItems(list(map(str, range(1, MAX_USER_DEFINED_CONTROLLERS + 1))))

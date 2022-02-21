@@ -13,6 +13,7 @@ from arrow import now
 import numpy as np
 import rv.api as rv
 from rv.cmidmap import MidiMessageType
+from rv.modules.metamodule import MAX_USER_DEFINED_CONTROLLERS
 from rv.note import NOTE, NOTECMD
 from sails.midi.ccmappings import cc_mappings
 from sails.ui import App
@@ -187,7 +188,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         self.alias_controllers = defaultdict(set)
 
     def clear_udc_assignments(self):
-        self.udc_assignments = [set() for _ in range(27)]
+        self.udc_assignments = [set() for _ in range(MAX_USER_DEFINED_CONTROLLERS)]
         if hasattr(self, "udc_manager"):
             self.udc_manager.assignments = self.udc_assignments
 
