@@ -56,8 +56,7 @@ class ControllersManager(QObject):
         self.widgets = OrderedDict()
         self.controller_widgets = OrderedDict()
 
-    def create_widgets(self, prefix='', group=None, group_widget=None,
-                       layout=None):
+    def create_widgets(self, prefix="", group=None, group_widget=None, layout=None):
         if group is None:
             group = self.root_group
         if group_widget is None:
@@ -85,7 +84,7 @@ class ControllersManager(QObject):
                 widget.valueChanged.connect(self.valueChanged)
                 widget.udcChanged.connect(self.udcChanged)
             elif isinstance(value, Group):
-                subprefix = name + '.'
+                subprefix = name + "."
                 groupbox = GroupWidget(
                     parent=group_widget,
                     name=key,
@@ -104,16 +103,16 @@ class ControllersManager(QObject):
         if layout is self.root_layout:
             layout.addStretch(1)
 
-    def _save_values(self, prefix='', group=None):
+    def _save_values(self, prefix="", group=None):
         if group is None:
             group = self.root_group
         for key, x in group.items():
             if isinstance(x, Group):
-                prefix2 = '{}.'.format(key)
+                prefix2 = "{}.".format(key)
                 for key2, value2 in self._save_values(prefix2, x):
                     yield key2, value2
             else:
-                yield '{}{}'.format(prefix, key), (x.value, x.ctl.value_type)
+                yield "{}{}".format(prefix, key), (x.value, x.ctl.value_type)
 
     def save_values(self):
         return OrderedDict(self._save_values())
@@ -122,13 +121,15 @@ class ControllersManager(QObject):
         set_values = []
         for key, (value, value_type) in values.items():
             if key in self.widgets:
-                if hasattr(value, 'value'):
+                if hasattr(value, "value"):
                     value = value.value
                 set_values.append((key, value, value_type))
         if set_values:
+
             def set_ctl_values():
                 for k, v, vt in set_values:
                     self.set_ctl_value(k, v, vt)
+
             QTimer.singleShot(0, set_ctl_values)
 
     def restore_udc_assignments(self, assignments):
@@ -138,7 +139,7 @@ class ControllersManager(QObject):
                 if widget:
                     widget.udc_combobox.setCurrentText(str(i))
                 else:
-                    print('Warning: Could not find widget for {!r}'.format(name))
+                    print("Warning: Could not find widget for {!r}".format(name))
 
 
 class ControllerWidget(QWidget):
@@ -177,26 +178,32 @@ class ControllerWidget(QWidget):
             hlayout.setContentsMargins(0, 0, 0, 0)
             hlayout.setSpacing(5)
             udc_combobox = self.udc_combobox = UdcComboBox(self)
-            label = QLabel(name.split('.')[-1], self)
+            label = QLabel(name.split(".")[-1], self)
             cc_combobox = self.cc_combobox = QComboBox(self)
             cc_combobox.addItems(cc_mappings.options)
             cc_combobox.setEditable(True)
-            self.managed_widget = w = widget_class(parent=self, value_type=t, initial_value=value)
+            self.managed_widget = w = widget_class(
+                parent=self, value_type=t, initial_value=value
+            )
             hlayout.addWidget(label, 1)
             hlayout.addSpacing(5)
             hlayout.addWidget(udc_combobox)
             hlayout.addWidget(cc_combobox)
             vlayout.addItem(hlayout)
             vlayout.addWidget(w)
-            udc_combobox.currentTextChanged.connect(self.on_udc_combobox_currentTextChanged)
-            cc_combobox.currentTextChanged.connect(self.on_cc_combobox_currentTextChanged)
+            udc_combobox.currentTextChanged.connect(
+                self.on_udc_combobox_currentTextChanged
+            )
+            cc_combobox.currentTextChanged.connect(
+                self.on_cc_combobox_currentTextChanged
+            )
             w.value_changed.connect(self.on_child_valueChanged)
 
     def on_cc_combobox_currentTextChanged(self, text):
         self.mappingChanged.emit(text, self.name)
 
     def on_udc_combobox_currentTextChanged(self, text):
-        self.udcChanged.emit(None if text == '' else int(text), self.name)
+        self.udcChanged.emit(None if text == "" else int(text), self.name)
 
     def on_child_valueChanged(self, value):
         self.valueChanged.emit(value, self.name)
@@ -210,21 +217,22 @@ class ControllerWidget(QWidget):
         if not value_type or value_type == self.managed_widget.value_type:
             self.managed_widget.set_ctl_value(value)
         else:
-            print('INFO: {} expected {}, got {}'.format(
-                self.name, self.managed_widget.value_type, value_type))
+            print(
+                "INFO: {} expected {}, got {}".format(
+                    self.name, self.managed_widget.value_type, value_type
+                )
+            )
 
 
 class GroupWidget(QGroupBox):
-
     def __init__(self, parent, name, group):
         super().__init__(parent)
-        self.setTitle(name.split('.')[-1])
+        self.setTitle(name.split(".")[-1])
         self.setLayout(QVBoxLayout(self))
 
 
 class UdcComboBox(QComboBox):
-
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.addItem('')
         self.addItems(list(map(str, range(1, 28))))
+        self.addItem("")
