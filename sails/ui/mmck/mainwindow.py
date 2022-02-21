@@ -214,22 +214,25 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
         self.parameters_manager.clear_widgets()
         with self.catcher:
             try:
-                with open(path, "r") as f:
-                    self.kit.py_source = f.read()
-                self.load_kit_parameter_values()
-                self.parameters_manager.parameters = self.kit.parameters
-                self.rebuild_project()
-                self.clear_udc_assignments()
-                if hasattr(self.kit.py_module, "udc_assignments"):
-                    self.update_udc_assignments(
-                        self.kit.py_module.udc_assignments(self.kit.parameter_values)
-                    )
+                self._load_kit_and_initialize_project(path)
             except Exception:
                 print(traceback.format_exc())
                 return
             else:
                 print("Finished loading at {}".format(strftime("%c")))
         self.file_watcher.paths = [path] + self.kit.watch_paths
+
+    def _load_kit_and_initialize_project(self, path):
+        with open(path, "r") as f:
+            self.kit.py_source = f.read()
+        self.load_kit_parameter_values()
+        self.parameters_manager.parameters = self.kit.parameters
+        self.rebuild_project()
+        self.clear_udc_assignments()
+        if hasattr(self.kit.py_module, "udc_assignments"):
+            self.update_udc_assignments(
+                self.kit.py_module.udc_assignments(self.kit.parameter_values)
+            )
 
     def auto_map_controllers(self):
         for alias, (name, w) in zip(
@@ -242,11 +245,12 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
             mod = w.module
             ctl = w.ctl
             ccs = cc_mappings.alias_ccs[alias]
-            if ccs:
-                cc = list(sorted(ccs))[0]
-                midmap = mod.controller_midi_maps[ctl.name]
-                midmap.message_type = MidiMessageType.control_change
-                midmap.message_parameter = cc
+            if not ccs:
+                continue
+            cc = list(sorted(ccs))[0]
+            midmap = mod.controller_midi_maps[ctl.name]
+            midmap.message_type = MidiMessageType.control_change
+            midmap.message_parameter = cc
 
     def rebuild_project(self):
         values = self.controllers_manager.save_values()
@@ -266,8 +270,7 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
     def load_kit_parameter_values(self):
         App.settings.beginGroup("mmck_params")
         try:
-            saved_params = App.settings.value(self.kit.name)
-            if saved_params:
+            if saved_params := App.settings.value(self.kit.name):
                 self.kit.parameter_values.update(saved_params)
         finally:
             App.settings.endGroup()
@@ -484,15 +487,16 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
     @pyqtSlot()
     def on_action_export_project_triggered(self):
         path = self.loaded_path
-        if path:
-            with self.catcher.more:
-                project = self.exportable_project()
-                slug = project.name.lower().replace(" ", "-")
-                timestamp = now().strftime("%Y%m%d%H%M%S")
-                filename = "{}-{}-{}.sunvox".format(path, slug, timestamp)
-                with open(filename, "wb") as f:
-                    project.write_to(f)
-                print("Exported project to {}".format(filename))
+        if not path:
+            return
+        with self.catcher.more:
+            project = self.exportable_project()
+            slug = project.name.lower().replace(" ", "-")
+            timestamp = now().strftime("%Y%m%d%H%M%S")
+            filename = "{}-{}-{}.sunvox".format(path, slug, timestamp)
+            with open(filename, "wb") as f:
+                project.write_to(f)
+            print("Exported project to {}".format(filename))
 
     @pyqtSlot()
     def on_action_export_wav_triggered(self):
@@ -501,49 +505,50 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
                 print("WAV export only available on MacOS (for now!)")
                 return
         path = self.loaded_path
-        if path:
-            with self.catcher.more:
-                project = self.exportable_project()
-                slug = project.name.lower().replace(" ", "-")
-                timestamp = now().strftime("%Y%m%d%H%M%S")
-                bpm = project.initial_bpm / (project.initial_tpl / 6)
-                filename = "{}-{}-{}bpm-{}.wav".format(path, slug, bpm, timestamp)
-                freq = 44100
-                size = freq
-                channels = 2
-                data_type = float32
-                p = BufferedProcess(
-                    freq=freq, size=size, channels=channels, data_type=data_type
-                )
-                slot = Slot(project, process=p)
-                length = slot.get_song_length_frames()
-                output = np.zeros((length, 2), data_type)
-                position = 0
-                slot.play_from_beginning()
-                dialog = QProgressDialog(
-                    "Writing WAV to {}".format(filename), "Cancel", 0, length, self
-                )
-                dialog.setWindowModality(Qt.WindowModal)
-                dialog.forceShow()
-                cancelled = False
-                while position < length:
-                    if dialog.wasCanceled():
-                        cancelled = True
-                        break
-                    buffer = p.fill_buffer()
-                    end_pos = min(position + freq, length)
-                    copy_size = end_pos - position
-                    output[position:end_pos] = buffer[:copy_size]
-                    position = end_pos
-                    dialog.setValue(position)
-                if not cancelled:
-                    wavfile.write(filename, freq, output)
-                    print("Exported project to {}".format(filename))
-                else:
-                    print("Cancelled export")
-                p.deinit()
-                p.kill()
-                dialog.close()
+        if not path:
+            return
+        with self.catcher.more:
+            project = self.exportable_project()
+            slug = project.name.lower().replace(" ", "-")
+            timestamp = now().strftime("%Y%m%d%H%M%S")
+            bpm = project.initial_bpm / (project.initial_tpl / 6)
+            filename = "{}-{}-{}bpm-{}.wav".format(path, slug, bpm, timestamp)
+            freq = 44100
+            size = freq
+            channels = 2
+            data_type = float32
+            p = BufferedProcess(
+                freq=freq, size=size, channels=channels, data_type=data_type
+            )
+            slot = Slot(project, process=p)
+            length = slot.get_song_length_frames()
+            output = np.zeros((length, 2), data_type)
+            position = 0
+            slot.play_from_beginning()
+            dialog = QProgressDialog(
+                "Writing WAV to {}".format(filename), "Cancel", 0, length, self
+            )
+            dialog.setWindowModality(Qt.WindowModal)
+            dialog.forceShow()
+            cancelled = False
+            while position < length:
+                if dialog.wasCanceled():
+                    cancelled = True
+                    break
+                buffer = p.fill_buffer()
+                end_pos = min(position + freq, length)
+                copy_size = end_pos - position
+                output[position:end_pos] = buffer[:copy_size]
+                position = end_pos
+                dialog.setValue(position)
+            if not cancelled:
+                wavfile.write(filename, freq, output)
+                print("Exported project to {}".format(filename))
+            else:
+                print("Cancelled export")
+            p.deinit()
+            p.kill()
+            dialog.close()
 
     @pyqtSlot()
     def on_action_play_from_beginning_triggered(self):
@@ -590,11 +595,15 @@ class MmckMainWindow(MmckMainWindowBase, Ui_MmckMainWindow):
                 else:
                     print("{} is not a project or metamodule".format(filename))
                     return
-                mmckdata = None
-                for mod in reversed(project.modules):
-                    if mod.name == "mmckdata":
-                        mmckdata = mod
-                        break
+                mmckdata = next(
+                    (
+                        mod
+                        for mod in reversed(project.modules)
+                        if mod.name == "mmckdata"
+                    ),
+                    None,
+                )
+
                 if not mmckdata:
                     print("Could not find mmckdata module in {}".format(filename))
                     return
