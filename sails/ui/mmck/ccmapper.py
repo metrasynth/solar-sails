@@ -1,3 +1,4 @@
+import math
 from enum import Enum
 
 from PyQt5.QtCore import QObject, pyqtSlot
@@ -42,12 +43,24 @@ class CCMapper(QObject):
                 else:
                     print("Unknown value_type {}".format(value_type))
                     continue
-                range = max_value - min_value
-                factor = range / 127.0
+                value_range = max_value - min_value
                 is_relative = "relative" in options
                 if is_relative:
-                    value = int(message.value) - 0x40
+                    value = int(message.value) - 0x40  # move center to 0
+                    if abs(value) > 1:
+                        # Accelerate.
+
+                        # Option 1:
+                        # max_movement = value_range / 16
+                        # value = max_movement * ((value - 1) / 16)
+
+                        # Option 2:
+                        base = 1 + (math.log2(value_range) / 48)
+                        exponent = abs(value) - 1
+                        scaling = base**exponent
+                        value = int(value * scaling)
                 else:
+                    factor = value_range / 127.0
                     value = int(message.value * factor)
                     value += min_value
                 self.controlValueChanged.emit(name, value, is_relative)
