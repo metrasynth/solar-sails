@@ -1,7 +1,6 @@
 import os
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import QWidget, QHBoxLayout
 from PyQt5.uic import loadUiType
 
 
