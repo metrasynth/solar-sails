@@ -1,6 +1,6 @@
 import os
 
-from PyQt5.uic import loadUiType
+from PyQt6.uic import loadUiType
 
 from sails.ui.openers.opener import Opener
 

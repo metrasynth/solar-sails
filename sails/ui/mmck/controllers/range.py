@@ -1,7 +1,7 @@
 import os
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-from PyQt5.uic import loadUiType
+from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from PyQt6.uic import loadUiType
 
 
 UIC_NAME = "range.ui"

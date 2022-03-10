@@ -1,5 +1,5 @@
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QSpinBox
+from PyQt6.QtCore import pyqtSlot
+from PyQt6.QtWidgets import QSpinBox
 from sf.mmck.parameters import Integer
 from .manager import widget_class_for
 from .widget import ParameterWidget

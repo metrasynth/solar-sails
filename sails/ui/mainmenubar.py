@@ -1,7 +1,8 @@
 import logging
 
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QAction, QMenuBar, qApp
+from PyQt6.QtCore import pyqtSlot
+from PyQt6.QtGui import QAction
+from PyQt6.QtWidgets import QMenuBar, QApplication
 
 from sails.ui.openers import AnyOpener
 from sails.ui.settings.settingsdialog import SettingsDialog
@@ -43,7 +44,7 @@ class MainMenuBar(QMenuBar):
 
     @pyqtSlot()
     def on_file_exit_triggered(self):
-        qApp.quit()
+        QApplication.instance().quit()
 
     @pyqtSlot()
     def on_file_open_triggered(self):
@@ -52,7 +53,7 @@ class MainMenuBar(QMenuBar):
         if window is not None:
             logging.debug('Got window %r', window)
             window.show()
-            window.setFocus(True)
+            window.setFocus()
 
     @pyqtSlot()
     def on_file_settings_triggered(self):
@@ -60,9 +61,10 @@ class MainMenuBar(QMenuBar):
 
     @pyqtSlot()
     def on_tools_polyphonist_triggered(self):
+        qApp = QApplication.instance()
         if not hasattr(qApp, '_tools_polyphonist'):
             from sails.ui.polyphonist.polyphonistmainwindow \
                 import PolyphonistMainWindow
             qApp._tools_polyphonist = PolyphonistMainWindow()
         qApp._tools_polyphonist.show()
-        qApp._tools_polyphonist.setFocus(True)
+        qApp._tools_polyphonist.setFocus()

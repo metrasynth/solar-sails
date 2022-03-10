@@ -1,5 +1,5 @@
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QPlainTextEdit
+from PyQt6.QtCore import pyqtSlot
+from PyQt6.QtWidgets import QPlainTextEdit
 from sf.mmck.parameters import PathList
 from .manager import widget_class_for
 from .widget import ParameterWidget

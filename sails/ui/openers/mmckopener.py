@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import qApp
+from PyQt6.QtWidgets import QApplication
 
 from .opener import Opener
 
@@ -11,12 +11,13 @@ class MmckOpener(Opener):
 
     @classmethod
     def main_window(cls, filename):
+        qApp = QApplication.instance()
         if not hasattr(qApp, "_tools_mmck"):
             from sails.ui.mmck.mainwindow import MmckMainWindow
 
             qApp._tools_mmck = MmckMainWindow()
         mmck = qApp._tools_mmck
         mmck.showMaximized()
-        mmck.setFocus(True)
+        mmck.setFocus()
         mmck.load_file(filename)
         return mmck

@@ -1,6 +1,6 @@
-from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
-from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QLabel
+from PyQt6.QtCore import QObject, pyqtSignal, pyqtSlot
+from PyQt6.QtCore import QTimer
+from PyQt6.QtWidgets import QLabel
 
 
 PARAMETER_WIDGETS = {

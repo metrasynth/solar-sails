@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QObject
-from PyQt5.QtWidgets import qApp
+from PyQt6.QtCore import QObject
+from PyQt6.QtWidgets import QApplication
 
 import sunvox.api as sv
 
@@ -10,7 +10,7 @@ class SunvoxProcess(QObject):
         super().__init__(parent)
         self.sunvox = process if process else sv
         self.sunvox.init(None, 44100, 2, 0)
-        qApp.aboutToQuit.connect(self.shutdown)
+        QApplication.instance().aboutToQuit.connect(self.shutdown)
 
     @property
     def slot(self):

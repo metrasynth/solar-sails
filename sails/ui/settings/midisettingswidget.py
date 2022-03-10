@@ -1,7 +1,7 @@
 import os
 
-from PyQt5.QtCore import QStringListModel, pyqtSlot
-from PyQt5.uic import loadUiType
+from PyQt6.QtCore import QStringListModel, pyqtSlot
+from PyQt6.uic import loadUiType
 from sails.lib import mido
 from sails import midi
 from sails.ui import App

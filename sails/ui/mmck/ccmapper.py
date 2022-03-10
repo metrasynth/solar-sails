@@ -1,8 +1,8 @@
 import math
 from enum import Enum
 
-from PyQt5.QtCore import QObject, pyqtSlot
-from PyQt5.QtCore import pyqtSignal
+from PyQt6.QtCore import QObject, pyqtSlot
+from PyQt6.QtCore import pyqtSignal
 
 from rv.controller import DependentRange, Range
 from sails import midi

@@ -1,6 +1,6 @@
 networkx
 numpy
-PyQt5
+PyQt6
 pyrsistent
 scipy
 sounddevice

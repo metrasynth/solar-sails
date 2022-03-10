@@ -2,7 +2,7 @@ import asyncio
 import sys
 
 import begin
-from PyQt5.QtWidgets import QMainWindow
+from PyQt6.QtWidgets import QMainWindow
 from quamash import QEventLoop
 from sails import midi
 from sails.ui.app import App
@@ -34,5 +34,5 @@ def main(*filenames: 'Files to open immediately'):
         window = Opener.open_file(filename)
         if window:
             window.show()
-            window.setFocus(True)
+            window.setFocus()
     loop.run_forever()

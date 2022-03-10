@@ -1,8 +1,8 @@
 import os
 
-from PyQt5.QtCore import QObject, pyqtSlot
-from PyQt5.QtCore import QTimer
-from PyQt5.QtCore import pyqtSignal
+from PyQt6.QtCore import QObject, pyqtSlot
+from PyQt6.QtCore import QTimer
+from PyQt6.QtCore import pyqtSignal
 
 
 class FileWatcher(QObject):

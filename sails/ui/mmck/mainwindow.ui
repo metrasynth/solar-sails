@@ -99,9 +99,9 @@
      <height>98</height>
     </size>
    </property>
-   <property name="features">
-    <set>QDockWidget::AllDockWidgetFeatures</set>
-   </property>
+<!--   <property name="features">-->
+<!--    <set>QDockWidget::AllDockWidgetFeatures</set>-->
+<!--   </property>-->
    <property name="windowTitle">
     <string>Parameters</string>
    </property>
@@ -172,9 +172,9 @@
      <height>98</height>
     </size>
    </property>
-   <property name="features">
-    <set>QDockWidget::AllDockWidgetFeatures</set>
-   </property>
+<!--   <property name="features">-->
+<!--    <set>QDockWidget::AllDockWidgetFeatures</set>-->
+<!--   </property>-->
    <property name="windowTitle">
     <string>User Defined Controllers</string>
    </property>

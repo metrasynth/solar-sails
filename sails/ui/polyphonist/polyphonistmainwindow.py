@@ -1,7 +1,7 @@
 import os
 
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.uic import loadUiType
+from PyQt6.QtCore import pyqtSlot
+from PyQt6.uic import loadUiType
 
 from sails.ui import App
 from sails.ui.polyphonist.polyphonistmainmenubar import PolyphonistMainMenuBar

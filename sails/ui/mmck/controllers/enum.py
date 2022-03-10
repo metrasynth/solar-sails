@@ -1,5 +1,5 @@
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import QComboBox
+from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from PyQt6.QtWidgets import QComboBox
 
 
 class EnumWidget(QComboBox):

@@ -1,6 +1,6 @@
 import os
 
-from PyQt5.uic import loadUiType
+from PyQt6.uic import loadUiType
 
 UIC_NAME = 'audiosettingswidget.ui'
 UIC_PATH = os.path.join(os.path.dirname(__file__), UIC_NAME)

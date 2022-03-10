@@ -1,11 +1,11 @@
 from collections import OrderedDict
 from enum import Enum
 
-from PyQt5.QtCore import QObject, pyqtSignal
-from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QCheckBox
-from PyQt5.QtWidgets import QComboBox
-from PyQt5.QtWidgets import QGroupBox, QLabel, QVBoxLayout, QWidget, QHBoxLayout
+from PyQt6.QtCore import QObject, pyqtSignal
+from PyQt6.QtCore import QTimer
+from PyQt6.QtWidgets import QCheckBox
+from PyQt6.QtWidgets import QComboBox
+from PyQt6.QtWidgets import QGroupBox, QLabel, QVBoxLayout, QWidget, QHBoxLayout
 from rv.controller import Range, DependentRange
 from rv.modules.metamodule import MAX_USER_DEFINED_CONTROLLERS, UserDefinedProxy
 from sf.mmck.controllers import Controller, Group

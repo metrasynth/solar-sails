@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QObject
-from PyQt5.QtWidgets import QLabel
+from PyQt6.QtCore import QObject
+from PyQt6.QtWidgets import QLabel
 
 
 class UdcManager(QObject):

@@ -1,6 +1,6 @@
 import os
 import sys
-from PyQt5.uic import loadUiType
+from PyQt6.uic import loadUiType
 
 import py
 

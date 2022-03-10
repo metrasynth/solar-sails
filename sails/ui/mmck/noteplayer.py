@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QObject, pyqtSlot
-from PyQt5.QtCore import pyqtSignal
+from PyQt6.QtCore import QObject, pyqtSlot
+from PyQt6.QtCore import pyqtSignal
 
 from sails import midi
 

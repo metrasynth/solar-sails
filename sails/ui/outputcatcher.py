@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5.QtWidgets import QPlainTextEdit, qApp
+from PyQt6.QtWidgets import QPlainTextEdit
 
 
 class OutputCatcher(object):

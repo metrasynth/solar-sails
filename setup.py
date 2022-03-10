@@ -15,7 +15,7 @@ dependencies = [
     'ipykernel',
     'ipython',
     'prompt-toolkit',
-    'pyqt5',
+    'pyqt6',
     'pyrsistent',
     'python-osc',
     'quamash',

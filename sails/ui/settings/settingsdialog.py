@@ -1,8 +1,8 @@
 import os
 import sys
 
-from PyQt5.QtWidgets import QVBoxLayout
-from PyQt5.uic import loadUiType
+from PyQt6.QtWidgets import QVBoxLayout
+from PyQt6.uic import loadUiType
 
 from sails.ui.settings.audiosettingswidget import AudioSettingsWidget
 from sails.ui.settings.midisettingswidget import MidiSettingsWidget

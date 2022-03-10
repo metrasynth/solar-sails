@@ -5,9 +5,9 @@ from collections import defaultdict
 from time import strftime
 
 import io
-from PyQt5.QtCore import pyqtSlot, Qt, QTimer
-from PyQt5.QtWidgets import QFileDialog, QProgressDialog
-from PyQt5.uic import loadUiType
+from PyQt6.QtCore import pyqtSlot, Qt, QTimer
+from PyQt6.QtWidgets import QFileDialog, QProgressDialog
+from PyQt6.uic import loadUiType
 
 from arrow import now
 import numpy as np
