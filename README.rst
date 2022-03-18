@@ -69,10 +69,10 @@ Requirements for building from source
 
 - Python 3.6
 
-- OS supported by PyQt5_ and sunvox-dll-python_.
+- OS supported by PyQt6_ and sunvox-dll-python_.
 
-..  _PyQt5:
-    https://pypi.org/project/PyQt5/
+..  _PyQt6:
+    https://pypi.org/project/PyQt6/
 
 
 Metrasynth
