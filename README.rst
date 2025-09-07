@@ -3,12 +3,12 @@ Overview of Solar Sails
 
 ..  start-badges
 
-|travisstatus| |appveyorstatus| |docs|
+|githubstatus| |appveyorstatus| |docs|
 
-.. |travisstatus| image:: https://img.shields.io/travis/metrasynth/solar-sails.svg?style=flat
-    :alt: MacOS Build Status
+.. |githubstatus| image:: https://github.com/metrasynth/solar-sails/workflows/Build%20and%20Test/badge.svg
+    :alt: Build Status
     :scale: 100%
-    :target: https://travis-ci.org/metrasynth/solar-sails
+    :target: https://github.com/metrasynth/solar-sails/actions
 
 .. |appveyorstatus| image:: https://ci.appveyor.com/api/projects/status/r56dscldcaxw56tq?svg=true
     :alt: Windows Build Status
@@ -67,12 +67,49 @@ Requirements for downloadable app
 Requirements for building from source
 -------------------------------------
 
-- Python 3.6
+- Python 3.12 or later
 
 - OS supported by PyQt6_ and sunvox-dll-python_.
 
+- uv_ package manager
+
 ..  _PyQt6:
     https://pypi.org/project/PyQt6/
+
+..  _uv:
+    https://github.com/astral-sh/uv
+
+
+Development setup
+-----------------
+
+To set up a development environment:
+
+1. Install uv if not already installed::
+
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+
+2. Clone the repository and navigate to the project directory::
+
+    git clone https://github.com/metrasynth/solar-sails.git
+    cd solar-sails
+
+3. Install Python 3.12 and sync dependencies::
+
+    uv python install 3.12
+    uv sync --all-extras
+
+4. Install the package in editable mode::
+
+    uv pip install -e .
+
+5. Run the application::
+
+    uv run sails-gui
+
+6. Run tests::
+
+    uv run pytest
 
 
 Metrasynth

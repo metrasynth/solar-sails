@@ -19,6 +19,8 @@ develop-eggs
 .installed.cfg
 venv*/
 pyvenv*/
+.venv/
+uv.lock
 
 # Installer logs
 pip-log.txt

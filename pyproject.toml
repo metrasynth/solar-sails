@@ -1,0 +1,71 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "solar-sails"
+dynamic = ["version"]
+description = "SunVox Augmentation and Interactive Live-coding System"
+readme = "README.rst"
+requires-python = ">=3.12,<3.13"
+license = {text = "MIT"}
+authors = [
+    {name = "Matthew Scott", email = "matt@11craft.com"},
+]
+keywords = ["sunvox", "audio", "synthesis", "live-coding"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX",
+    "Operating System :: MacOS",
+    "Operating System :: Unix",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Sound/Audio :: Analysis",
+    "Topic :: Multimedia :: Sound/Audio :: Editors",
+    "Topic :: Multimedia :: Sound/Audio :: Sound Synthesis",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "networkx",
+    "numpy",
+    "PyQt6",
+    "pyrsistent",
+    "scipy",
+    "sounddevice",
+    "wavio",
+    "orbitant",
+    "sunvosc",
+    "solar-flares @ git+https://github.com/metrasynth/solar-flares@7b7706c",
+    "quamash @ git+https://github.com/metrasynth/quamash@ed9049e8c5c760aa6e0894f424d533d15094bac0",
+    "radiant-voices>=2.0.0.2.1.2.1",
+    "sunvox-dll-python>=0.2.0.1.9.3.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/metrasynth/solar-sails"
+Repository = "https://github.com/metrasynth/solar-sails"
+
+[project.scripts]
+sailsd = "sails.scripts.sailsd:main.start"
+sails-console = "sails.scripts.console:main.start"
+sails-gui = "sails.scripts.gui:main.start"
+
+[tool.setuptools]
+packages = ["sails"]
+include-package-data = true
+
+[tool.setuptools.dynamic]
+version = {attr = "sails.__version__"}
+
+[tool.uv]
+dev-dependencies = [
+    "py>=1.11.0",
+    "pyinstaller>=6.0",
+    "pytest>=7.0",
+    "pytest-watch>=4.0",
+]
